@@ -1,0 +1,224 @@
+{
+  "schema_version": "1.0.0",
+  "generated_for": "phase_6_word_environment_diagnostic",
+  "environment": {
+    "python": {
+      "version": "3.12.10",
+      "executable": "C:/Users/ahmed/AppData/Local/Programs/Python/Python312/python.exe",
+      "architecture_bits": 64,
+      "platform": "Windows-11-10.0.26100-SP0",
+      "machine": "AMD64"
+    },
+    "windows": {
+      "architecture": "64-bit",
+      "cim_operating_system_query": {
+        "status": "FAILED",
+        "error": "Access to a CIM resource was not available to the client."
+      },
+      "interactive_desktop": true,
+      "session_id": 1
+    },
+    "pywin32": {
+      "status": "AVAILABLE",
+      "pywin32_version": "311",
+      "pythoncom_file": "C:/Users/ahmed/AppData/Local/Programs/Python/Python312/Lib/site-packages/pywin32_system32/pythoncom312.dll",
+      "win32com_file": "C:/Users/ahmed/AppData/Local/Programs/Python/Python312/Lib/site-packages/win32com/__init__.py",
+      "coinitialize_apartmentthreaded_value": 2
+    },
+    "word_com_registration": {
+      "prog_id": "Word.Application",
+      "clsid": "{000209FF-0000-0000-C000-000000000046}",
+      "local_server32": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE /Automation",
+      "app_paths": [
+        {
+          "registry_path": "HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/App Paths/WINWORD.EXE",
+          "default": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE",
+          "path": "C:/Program Files/Microsoft Office/Root/Office16/"
+        },
+        {
+          "registry_path": "HKEY_LOCAL_MACHINE/SOFTWARE/WOW6432Node/Microsoft/Windows/CurrentVersion/App Paths/WINWORD.EXE",
+          "default": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE",
+          "path": "C:/Program Files/Microsoft Office/Root/Office16/"
+        }
+      ]
+    },
+    "word_executable": {
+      "path": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE",
+      "exists": true,
+      "pe_machine_hex": "0x8664",
+      "architecture": "x64"
+    }
+  },
+  "process_snapshots": {
+    "before_probes_word_processes": [
+      {
+        "pid": 31656,
+        "name": "WINWORD",
+        "path": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE",
+        "start_time": "2026-07-02T12:53:04.8966475+03:00"
+      },
+      {
+        "pid": 32236,
+        "name": "WINWORD",
+        "path": "C:/Program Files/Microsoft Office/root/Office16/WINWORD.EXE",
+        "start_time": "2026-07-02T17:42:42.9676497+03:00"
+      }
+    ],
+    "after_word_smoke_word_processes": [
+      {
+        "pid": 31656,
+        "name": "WINWORD",
+        "path": "C:/Program Files/Microsoft Office/Root/Office16/WINWORD.EXE",
+        "start_time": "2026-07-02T12:53:04.8966475+03:00"
+      },
+      {
+        "pid": 32236,
+        "name": "WINWORD",
+        "path": "C:/Program Files/Microsoft Office/root/Office16/WINWORD.EXE",
+        "start_time": "2026-07-02T17:42:42.9676497+03:00"
+      }
+    ],
+    "python_processes_after_word_smoke": [
+      {
+        "pid": 34492,
+        "name": "python",
+        "path": "C:/Users/ahmed/AppData/Local/Programs/Python/Python312/python.exe",
+        "start_time": "2026-07-02T17:43:08.527705+03:00",
+        "ownership_verified": false,
+        "ownership_note": "Command line inspection was unavailable because CIM access was denied; process was not touched."
+      }
+    ],
+    "cim_process_query": {
+      "status": "FAILED",
+      "error": "Access to a CIM resource was not available to the client."
+    }
+  },
+  "code_review": {
+    "worker_uses_dispatch_ex": true,
+    "worker_sets_visible_false": true,
+    "worker_sets_display_alerts_zero": true,
+    "worker_sets_screen_updating_false": true,
+    "worker_uses_safe_open_arguments": true,
+    "worker_uses_sta_coinitialize": true,
+    "worker_uses_couninitialize_finally": true,
+    "global_word_process_kill": false,
+    "ownership_policy": "Word PID ownership requires app.Hwnd, GetWindowThreadProcessId, a before/after process snapshot, and a new WINWORD.EXE process."
+  },
+  "progressive_probes": [
+    {
+      "probe": 1,
+      "name": "import_pywin32",
+      "duration_seconds": 1.109,
+      "status": "PASS",
+      "last_checkpoint": "import_completed",
+      "worker_pid": 2220,
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "cleanup_result": { "status": "worker_completed", "exitcode": 0 },
+      "error_code": null,
+      "error": null
+    },
+    {
+      "probe": 2,
+      "name": "coinitialize_sta",
+      "duration_seconds": 2.811,
+      "status": "PASS",
+      "last_checkpoint": "coinitialize_completed",
+      "worker_pid": 10228,
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "cleanup_result": { "status": "worker_completed", "exitcode": 0 },
+      "error_code": null,
+      "error": null
+    },
+    {
+      "probe": 3,
+      "name": "dispatch_ex",
+      "duration_seconds": 8.12,
+      "status": "TIMEOUT",
+      "last_checkpoint": "dispatch_started",
+      "worker_pid": 4368,
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "cleanup_result": {
+        "status": "worker_terminated",
+        "word_process_cleanup": { "status": "owned_word_process_not_found", "pid": null, "running_after": null }
+      },
+      "error_code": "probe_timeout",
+      "error": "Probe exceeded 8 seconds."
+    },
+    {
+      "probe_range": "4-14",
+      "names": [
+        "version_and_hwnd",
+        "quit",
+        "new_document_close",
+        "open_structural_docx",
+        "update_fields",
+        "update_toc",
+        "repaginate",
+        "save_temp",
+        "close",
+        "reopen",
+        "final_close_and_quit"
+      ],
+      "status": "TIMEOUT",
+      "last_checkpoint": "dispatch_started",
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "cleanup_result": {
+        "status": "worker_terminated",
+        "word_process_cleanup": { "status": "owned_word_process_not_found", "pid": null, "running_after": null }
+      },
+      "error_code": "probe_timeout",
+      "error": "Each later probe timed out at DispatchEx before reaching its named Word operation."
+    }
+  ],
+  "smoke_tests": {
+    "structural_artifact": {
+      "command": "python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase6-word --format json",
+      "exit_code": 0,
+      "final_artifact_status": "STRUCTURALLY_VALID",
+      "docx_path": "tests_tmp/phase6-word/task-approved-plan-locked.docx",
+      "docx_sha256": "4d410ebbde3bfa95bb3763ae3c18846869a101c489e07aa000a69de701ba7b33"
+    },
+    "standalone_finalize_word": {
+      "command": "python -m legal_research_skill finalize-word tests_tmp/phase6-word/task-approved-plan-locked.docx --output tests_tmp/phase6-word/word-finalized.docx --word-timeout-seconds 60 --format json",
+      "exit_code": 3,
+      "status": "TIMEOUT",
+      "duration_seconds": 60.062,
+      "last_checkpoint": "dispatch_started",
+      "worker_pid": 7804,
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "worker_cleanup": "worker_terminated",
+      "word_process_cleanup": { "status": "owned_word_process_not_found", "pid": null, "running_after": null },
+      "output_path": null,
+      "final_output_exists": false
+    },
+    "required_word_build_artifact": {
+      "command": "python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase6-word-required --require-word --word-timeout-seconds 60 --format json",
+      "exit_code": 3,
+      "final_artifact_status": "BLOCKED",
+      "word_status": "TIMEOUT",
+      "duration_seconds": 60.047,
+      "last_checkpoint": "dispatch_started",
+      "worker_pid": 29568,
+      "word_pid": null,
+      "word_pid_ownership_verified": false,
+      "worker_cleanup": "worker_terminated",
+      "word_process_cleanup": { "status": "owned_word_process_not_found", "pid": null, "running_after": null },
+      "word_finalized_docx_path": null,
+      "word_finalized_output_exists": false
+    }
+  },
+  "judgment": {
+    "word_gate": "BLOCKED",
+    "root_cause_boundary": "DispatchEx(\"Word.Application\") does not return before timeout in this environment, even after explicit STA COM initialization.",
+    "word_validated_claim_allowed": false,
+    "print_ready_claim_allowed": false,
+    "cleanup_safe": true,
+    "owned_word_process_left_running": false,
+    "unowned_word_processes_touched": false
+  }
+}
