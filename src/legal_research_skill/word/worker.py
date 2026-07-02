@@ -16,6 +16,8 @@ def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str 
     started = time.monotonic()
     app = None
     document = None
+    com_initialized = False
+    pythoncom = None
     word_version = None
     diagnostics = _Diagnostics(diagnostics_path)
     evidence: dict[str, Any] = {
@@ -38,9 +40,12 @@ def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str 
             )
         try:
             client = importlib.import_module("win32com.client")
+            pythoncom = importlib.import_module("pythoncom")
         except ImportError as exc:
             return _result("NOT_AVAILABLE", input_path, None, started, "pywin32_missing", str(exc))
         try:
+            pythoncom.CoInitializeEx(pythoncom.COINIT_APARTMENTTHREADED)
+            com_initialized = True
             before_dispatch = process_snapshot()
             diagnostics.started("dispatch", evidence)
             app = client.DispatchEx("Word.Application")
@@ -153,6 +158,9 @@ def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str 
                 diagnostics.started("quit", evidence)
                 app.Quit()
                 diagnostics.completed("quit_completed", evidence)
+        if com_initialized and pythoncom is not None:
+            with suppress(Exception):
+                pythoncom.CoUninitialize()
 
 
 def _update_error_code(evidence: dict[str, Any]) -> str:

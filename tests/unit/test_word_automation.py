@@ -12,6 +12,36 @@ from legal_research_skill.word.worker import word_worker_entry
 from legal_research_skill.word.worker_cli import main as worker_cli_main
 
 
+class FakePythonCom:
+    COINIT_APARTMENTTHREADED = 2
+
+    def __init__(self) -> None:
+        self.initialized = False
+        self.uninitialized = False
+
+    def CoInitializeEx(self, mode):
+        assert mode == self.COINIT_APARTMENTTHREADED
+        self.initialized = True
+
+    def CoUninitialize(self):
+        self.uninitialized = True
+
+
+def fake_worker_importer(app, dispatch_error: Exception | None = None):
+    pythoncom = FakePythonCom()
+
+    def importer(name):
+        if name == "pythoncom":
+            return pythoncom
+        if name == "win32com.client":
+            if dispatch_error is not None:
+                return types.SimpleNamespace(DispatchEx=lambda _prog: (_ for _ in ()).throw(dispatch_error))
+            return types.SimpleNamespace(DispatchEx=lambda _prog: app)
+        raise ImportError(name)
+
+    return importer, pythoncom
+
+
 def test_word_availability_reports_non_windows(monkeypatch):
     monkeypatch.setattr("platform.system", lambda: "Linux")
     availability = detect_word_availability()
@@ -52,6 +82,7 @@ def test_word_availability_reports_dispatch_failure(monkeypatch):
 
 def test_worker_success_with_fake_com(monkeypatch, tmp_path):
     app = FakeWordApp()
+    importer, pythoncom = fake_worker_importer(app)
     monkeypatch.setattr("platform.system", lambda: "Windows")
     monkeypatch.setattr("legal_research_skill.word.worker.process_snapshot", lambda: {})
     monkeypatch.setattr("legal_research_skill.word.worker.word_pid_from_hwnd", lambda _hwnd: 5678)
@@ -61,7 +92,7 @@ def test_worker_success_with_fake_com(monkeypatch, tmp_path):
             pid=5678, ownership_verified=True, to_dict=lambda: {"pid": 5678, "ownership_verified": True}
         ),
     )
-    monkeypatch.setattr("importlib.import_module", lambda _name: types.SimpleNamespace(DispatchEx=lambda _prog: app))
+    monkeypatch.setattr("importlib.import_module", importer)
     diagnostics_path = tmp_path / "diagnostics.jsonl"
     result = word_worker_entry(str(tmp_path / "input.docx"), str(tmp_path / "work.docx"), str(diagnostics_path))
     assert result["status"] == "WORD_VALIDATED"
@@ -74,6 +105,8 @@ def test_worker_success_with_fake_com(monkeypatch, tmp_path):
     assert result["evidence"]["reopened"] is True
     assert "document_open_started" in diagnostics_path.read_text(encoding="utf-8")
     assert app.quit_called is True
+    assert pythoncom.initialized is True
+    assert pythoncom.uninitialized is True
     assert app.open_count == 2
 
 
@@ -88,12 +121,15 @@ def test_worker_success_with_fake_com(monkeypatch, tmp_path):
 )
 def test_worker_failure_modes_close_and_quit(monkeypatch, tmp_path, app_kwargs, error_code):
     app = FakeWordApp(**app_kwargs)
+    importer, pythoncom = fake_worker_importer(app)
     monkeypatch.setattr("platform.system", lambda: "Windows")
-    monkeypatch.setattr("importlib.import_module", lambda _name: types.SimpleNamespace(DispatchEx=lambda _prog: app))
+    monkeypatch.setattr("importlib.import_module", importer)
     result = word_worker_entry(str(tmp_path / "input.docx"), str(tmp_path / "work.docx"))
     assert result["status"] == "FAILED"
     assert result["error_code"] == error_code
     assert app.quit_called is True
+    assert pythoncom.initialized is True
+    assert pythoncom.uninitialized is True
     if app.last_document is not None:
         assert app.last_document.closed is True
 
@@ -102,13 +138,16 @@ def test_worker_dispatch_failure_and_non_windows(monkeypatch, tmp_path):
     monkeypatch.setattr("platform.system", lambda: "Linux")
     assert word_worker_entry("in.docx", "work.docx")["error_code"] == "not_windows"
     monkeypatch.setattr("platform.system", lambda: "Windows")
+    importer, pythoncom = fake_worker_importer(None, RuntimeError("COM"))
     monkeypatch.setattr(
         "importlib.import_module",
-        lambda _name: types.SimpleNamespace(DispatchEx=lambda _prog: (_ for _ in ()).throw(RuntimeError("COM"))),
+        importer,
     )
     result = word_worker_entry(str(tmp_path / "input.docx"), str(tmp_path / "work.docx"))
     assert result["status"] == "NOT_AVAILABLE"
     assert result["error_code"] == "word_dispatch_failed"
+    assert pythoncom.initialized is True
+    assert pythoncom.uninitialized is True
 
 
 def test_runner_timeout_terminates_worker_only(monkeypatch, tmp_path):
