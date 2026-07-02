@@ -11,7 +11,7 @@ The repository must support:
 - Claude Skill operation through `SKILL.md`.
 - Codex development and maintenance.
 - Modular methodology rules.
-- Future Arabic RTL DOCX generation.
+- Arabic RTL DOCX generation and structural validation.
 - Citation and footnote review contracts.
 - Colored and black-and-white print profiles.
 - Future automated tests for structure and formatting assumptions.
@@ -30,19 +30,19 @@ The repository must support:
 - Do not claim DOCX readiness unless generation and validation checks pass.
 - Keep `schema_version`, `report_schema_version`, package version, and validator versions aligned.
 - Add new rule IDs only through the central registry in `src/legal_research_skill/rules.py`.
-- Keep reports deterministic; do not use timestamps or random IDs in validation output.
+- Keep reports deterministic; do not use unbounded timestamps or random IDs in validation output.
 - Do not add silent defaults when loading research-state JSON; reject unsupported fields through schema validation.
 - Keep tests and fixtures updated whenever schema paths, rule IDs, or validator behavior change.
 - Do not allow unsupported claims such as print-ready, submission-ready, DOCX generated, Word-compatible, all citations verified, or automated legal validation without the required evidence.
 
 ## Suggested Implementation Roadmap
 
-1. Define a structured research source format, such as YAML or JSON, for title, metadata, plan, headings, paragraphs, citations, footnotes, and bibliography.
-2. Implement a DOCX generator under `scripts/`.
-3. Implement a DOCX validator that checks document structure, RTL settings, styles, margins, page sections, footnotes, bibliography, and table of contents requirements where technically possible.
-4. Add tests under `tests/` for rule compliance, heading hierarchy, forbidden heading levels, citation markers, and style profile invariants.
+1. Keep the structured JSON research-state schema stable unless a migration is explicitly scoped.
+2. Extend DOCX generation and validation through `src/legal_research_skill/docx/`.
+3. Keep Microsoft Word automation isolated under `src/legal_research_skill/word/`; never run COM automation in the CLI process without timeout isolation.
+4. Add tests under `tests/` for rule compliance, heading hierarchy, forbidden heading levels, citation markers, style profile invariants, DOCX package security, and Word gate failure modes.
 5. Add minimal examples under `examples/`.
-6. Add template assets under `templates/`.
+6. Add template assets under `templates/` only after a fixture policy exists.
 
 ## DOCX Implementation Guidance
 
@@ -67,6 +67,8 @@ Word-specific behavior, especially footnote numbering restart per page, may requ
 
 If tooling cannot enforce or verify a requirement, the script must emit a warning and the final report must mark the item as not validated.
 
+Word automation must use an isolated worker process with `DispatchEx("Word.Application")`, a configurable timeout, and structured results. On timeout, terminate only the worker process. Do not call broad process-kill commands such as killing every `WINWORD.EXE`; that risks terminating the user's own Word sessions.
+
 ## Testing Expectations
 
 Tests should cover:
@@ -84,6 +86,7 @@ Tests should cover:
 - JSON Schema validation for research state and validation reports.
 - Cross-reference, priority, approved-plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness validators.
 - CLI exit codes and deterministic reports.
+- DOCX structural validation reports, artifact manifests, Word timeout behavior, and optional Word gate CLI paths.
 
 ## Failure Policy
 
@@ -102,5 +105,5 @@ Codex must preserve these failure rules in scripts and tests:
 - Preserve Arabic text accurately.
 - Avoid secrets in examples, tests, fixtures, and reports.
 - Keep examples minimal and clearly marked as illustrative.
-- Do not commit generated binary DOCX files until the repository has a policy for fixtures and file size.
+- Do not commit generated binary DOCX files; keep smoke-test artifacts under ignored `tests_tmp/`.
 - Do not push automatically.

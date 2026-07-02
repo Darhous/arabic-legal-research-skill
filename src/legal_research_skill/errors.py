@@ -12,3 +12,7 @@ class SchemaValidationError(LegalResearchSkillError):
 
 class UnknownValidatorError(LegalResearchSkillError):
     """A requested validator name is not registered."""
+
+
+class ArtifactError(LegalResearchSkillError):
+    """A DOCX or artifact operation cannot be completed as requested."""

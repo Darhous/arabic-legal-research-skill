@@ -6,14 +6,21 @@ import pytest
 
 from legal_research_skill.loader import load_state, read_json
 from legal_research_skill.models import ResearchState, stable_json
-from legal_research_skill.schema_validation import load_schema, report_errors, research_state_errors
+from legal_research_skill.schema_validation import (
+    artifact_manifest_errors,
+    load_schema,
+    report_errors,
+    research_state_errors,
+)
 
 
 def test_schemas_load(root):
     research_schema = load_schema(str(root / "schemas" / "research-state.schema.json"))
     report_schema = load_schema(str(root / "schemas" / "validation-report.schema.json"))
+    manifest_schema = load_schema(str(root / "schemas" / "artifact-manifest.schema.json"))
     assert research_schema["$schema"].endswith("2020-12/schema")
     assert report_schema["$id"].startswith("urn:arabic-legal-research-skill")
+    assert manifest_schema["$schema"].endswith("2020-12/schema")
 
 
 def test_valid_fixtures_pass_schema(root, manifest):
@@ -62,3 +69,7 @@ def test_model_index_preserves_ids(minimal_data):
 
 def test_report_schema_rejects_missing_required_field():
     assert report_errors({"report_schema_version": "0.3.0"})
+
+
+def test_artifact_manifest_schema_rejects_missing_required_field():
+    assert artifact_manifest_errors({"manifest_schema_version": "0.4.0"})

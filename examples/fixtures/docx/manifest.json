@@ -1,0 +1,25 @@
+{
+  "fixtures": [
+    {
+      "path": "examples/fixtures/valid/approved-plan-locked.json",
+      "expected_decision": "PROCEED",
+      "expected_artifact_status": "STRUCTURALLY_VALID",
+      "word_required": false,
+      "expected_claims": ["DOCX generated", "DOCX structurally validated", "RTL structurally applied"]
+    },
+    {
+      "path": "examples/fixtures/valid/requires-verification-valid.json",
+      "expected_decision": "REVISE",
+      "expected_artifact_status": "STRUCTURALLY_VALID",
+      "word_required": false,
+      "expected_claims": ["DOCX generated", "DOCX structurally validated", "RTL structurally applied"]
+    },
+    {
+      "path": "examples/fixtures/invalid/unsupported-output-claim.json",
+      "expected_decision": "FAIL",
+      "expected_artifact_status": "BLOCKED",
+      "word_required": false,
+      "expected_claims": []
+    }
+  ]
+}

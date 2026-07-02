@@ -80,6 +80,24 @@ legal-research-skill explain PLAN-001
 
 These validators support schema, cross-reference, priority, approved-plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness checks. They do not generate DOCX files or validate Microsoft Word rendering.
 
+## Phase 4 DOCX Artifact Pipeline
+
+When structured research-state JSON passes the Phase 3 gate, the CLI can generate and validate DOCX artifacts:
+
+```bash
+legal-research-skill render-docx <state.json> --output <draft.docx>
+legal-research-skill validate-docx <draft.docx> --format json
+legal-research-skill build-artifact <state.json> --output-dir <dir>
+legal-research-skill finalize-word <draft.docx> --output <word.docx> --word-timeout-seconds 60
+legal-research-skill build-artifact <state.json> --output-dir <dir> --require-word --word-timeout-seconds 60
+```
+
+Structural DOCX validation is not the same as Microsoft Word validation. Structural validation checks the OPC/OOXML package, required parts, relationships, styles, RTL properties, TOC/PAGE fields, footnotes, page setup, and blocked external or embedded content. Word validation is only claimed when Microsoft Word runs in an isolated worker process, opens the DOCX, updates fields and the table of contents, repaginates, saves, reopens the output, and the resulting DOCX passes structural validation.
+
+The Word gate is optional by default. `--require-word` makes it mandatory and returns a blocked result if Word is unavailable, pywin32 is missing, COM fails, or the worker times out. The default timeout is 60 seconds. The tool terminates only its worker process on timeout and does not kill general user Word sessions.
+
+Result states include `STRUCTURALLY_VALID`, `WORD_VALIDATED`, `NOT_AVAILABLE`, `TIMEOUT`, `FAILED`, and `BLOCKED`. `WORD_VALIDATED` does not mean legal correctness, source authenticity, visual review, human acceptance, or print readiness.
+
 ## Execution State Machine
 
 The canonical state machine is defined in `rules/decision-engine.md`. The Skill must follow those states in order:

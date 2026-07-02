@@ -6,7 +6,14 @@ These files are reviewer contracts. They remain documentation contracts and are 
 
 Phase 3 adds executable text-level validators under `src/legal_research_skill/validators/`. Those modules implement schema, cross-reference, priority, plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness checks.
 
-The executable validators do not perform DOCX generation, Microsoft Word automation, internet source verification, legal correctness determination, or RTL rendering validation.
+The Phase 3 executable validators do not perform DOCX generation, Microsoft Word automation, internet source verification, legal correctness determination, or visual RTL rendering validation.
+
+Phase 4 adds separate artifact checks outside `src/legal_research_skill/validators/`:
+
+- `src/legal_research_skill/docx/validation.py` validates generated DOCX packages structurally.
+- `src/legal_research_skill/word/` runs optional Microsoft Word finalization through an isolated timeout-bound worker.
+
+These checks provide evidence for narrow claims such as `DOCX structurally validated` or `WORD_VALIDATED`. They do not replace reviewer contracts and do not prove legal correctness, source authenticity, human visual acceptance, or print readiness.
 
 ## Base Reviewer Contract
 

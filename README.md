@@ -17,7 +17,9 @@ The repository is designed as a **Legal Research Production Operating System**, 
 - Provides Phase 3 JSON Schema validation for structured research state.
 - Provides Phase 3 executable text-level validators for schema integrity, cross references, priority decisions, approved plans, hierarchy, methodology, citations, footnotes, bibliography, verification markers, output claims, and gate readiness.
 - Provides a Python CLI that emits machine-readable JSON reports and human-readable summaries.
-- Prepares work toward print-ready DOCX generation and validation without claiming those steps exist in Phase 2.
+- Generates deterministic Arabic RTL DOCX draft artifacts from validated research-state JSON.
+- Validates generated DOCX packages structurally as OPC/OOXML.
+- Optionally runs a Microsoft Word gate in an isolated worker process with a bounded timeout.
 
 ## What It Does Not Do
 
@@ -25,10 +27,10 @@ The repository is designed as a **Legal Research Production Operating System**, 
 - It does not rewrite approved professor plans unless the user explicitly requests that.
 - It does not treat generic profiles as stronger than uploaded university instructions.
 - It does not claim print readiness when DOCX formatting, footnotes, table of contents, or reviewer gates are unvalidated.
-- It does not currently implement DOCX generation scripts.
 - It does not automate source authenticity checks over the internet.
 - It does not determine legal correctness automatically.
-- It does not validate final Microsoft Word rendering or print readiness.
+- It does not claim Microsoft Word validation unless the optional Word gate opens, updates, saves, reopens, and structurally validates the DOCX.
+- It does not claim print readiness or human legal acceptance in Phase 4.
 
 ## Methodological Basis
 
@@ -196,14 +198,25 @@ Both preserve the same academic structure and differ only in visual styling.
 
 ## Current Status
 
-Phase 3 adds an executable research-state validation substrate. It includes JSON Schemas, Python domain models, deterministic validation reports, a CLI, representative fixtures, and automated tests for text-level and structural validation.
+Phase 4 adds a DOCX artifact pipeline. It includes deterministic DOCX generation, structural OOXML validation, artifact manifests, and an optional Microsoft Word finalization gate.
 
-Scripted DOCX generation, binary DOCX templates, Microsoft Word automation, source authenticity verification, legal correctness determination, and final RTL rendering validation remain intentionally unimplemented.
+Structural validation means the package, XML parts, relationships, styles, RTL properties, fields, page setup, and footnote links pass automated checks. Word validation is narrower and explicit: Microsoft Word must open the generated DOCX, update fields and TOC, repaginate, save, reopen, and then pass structural validation again.
+
+The Word gate is optional by default. Use `--require-word` to make it mandatory for `build-artifact`. The default Word timeout is 60 seconds, and the implementation runs Word automation in a worker process so the CLI cannot hang indefinitely. The tool does not kill general user Word sessions.
+
+Example commands:
+
+```bash
+python -m legal_research_skill render-docx examples/fixtures/valid/approved-plan-locked.json --output tests_tmp/sample.docx
+python -m legal_research_skill validate-docx tests_tmp/sample.docx --format json
+python -m legal_research_skill finalize-word tests_tmp/sample.docx --output tests_tmp/sample.word.docx --word-timeout-seconds 60 --format json
+python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase4-artifact
+python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase4-artifact-word --require-word --word-timeout-seconds 60
+```
 
 ## Roadmap
 
-- Phase 4: implement DOCX generation or a richer non-DOCX artifact flow, depending on the next accepted scope.
-- Later phase: implement DOCX structural validation and Microsoft Word/manual validation workflows.
+- Phase 5: legal content expansion and review workflows that build on the Phase 4 artifact pipeline.
 - Later phase: add template assets and release documentation.
 - Later phase: perform the professional GitHub README visual redesign.
 
@@ -215,7 +228,8 @@ The Skill must never fabricate authorities, cases, laws, books, articles, Hadith
 
 ## Limitations
 
-- Current executable validation is text-level and structural.
-- No script currently generates DOCX files.
-- The automated test suite validates the Phase 3 Python substrate, schemas, reports, fixtures, and CLI.
-- Microsoft Word behavior, including table of contents updates and per-page footnote numbering restart, still requires future implementation and validation.
+- Current executable validation covers research-state structure, DOCX package structure, and bounded Word automation behavior.
+- Microsoft Word validation requires Windows, Microsoft Word, and pywin32.
+- CI and ordinary tests do not require Microsoft Word.
+- `WORD_VALIDATED` does not mean human legal review, source authenticity verification, or print-ready acceptance.
+- `print-ready` remains prohibited unless the current policy's structural, Word, and visual/human review gates are all satisfied.

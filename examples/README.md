@@ -9,6 +9,7 @@ This directory contains Phase 3 structured JSON fixtures for the executable vali
 - `fixtures/valid/requires-verification-valid.json` is structurally valid while preserving an open `Requires Verification` marker and limited output claims.
 - `fixtures/invalid/*.json` cover representative validator failures.
 - `fixtures/manifest.json` records expected validators, rule IDs, decisions, and the reason each fixture exists.
+- `fixtures/docx/manifest.json` records representative Phase 4 DOCX artifact expectations. Binary DOCX files are generated during tests and smoke runs under ignored temporary paths, not committed.
 
 ## Example Policy
 
@@ -20,4 +21,8 @@ Use `Requires Verification` for illustrative citation records that are intention
 
 Each example includes expected validation results through `fixtures/manifest.json`. If a fixture intentionally fails, its failure purpose is documented there.
 
-These fixtures do not contain DOCX output and do not claim Microsoft Word validation.
+These fixtures do not contain committed DOCX output and do not claim Microsoft Word validation. Use the Phase 4 CLI to generate disposable artifacts:
+
+```bash
+python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase4-artifact
+```

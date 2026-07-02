@@ -7,7 +7,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
-from legal_research_skill.constants import RESEARCH_STATE_SCHEMA, VALIDATION_REPORT_SCHEMA
+from legal_research_skill.constants import ARTIFACT_MANIFEST_SCHEMA, RESEARCH_STATE_SCHEMA, VALIDATION_REPORT_SCHEMA
 
 
 def load_json_file(path: Path) -> Any:
@@ -34,4 +34,9 @@ def research_state_errors(data: Any) -> list[str]:
 
 def report_errors(data: Any) -> list[str]:
     validator = compiled_validator(str(VALIDATION_REPORT_SCHEMA))
+    return sorted(error.message for error in validator.iter_errors(data))
+
+
+def artifact_manifest_errors(data: Any) -> list[str]:
+    validator = compiled_validator(str(ARTIFACT_MANIFEST_SCHEMA))
     return sorted(error.message for error in validator.iter_errors(data))
