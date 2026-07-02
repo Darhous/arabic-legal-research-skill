@@ -45,8 +45,9 @@ def test_invalid_input_json(root, monkeypatch, capsys):
     assert any(finding["rule_id"] == "CLAIM-001" for finding in data["findings"])
 
 
-def test_output_file_and_compact(root, tmp_path, monkeypatch, capsys):
-    output = tmp_path / "report.json"
+def test_output_file_and_compact(root, monkeypatch, capsys):
+    output = root / "tests_tmp" / "report.json"
+    output.unlink(missing_ok=True)
     code, out, _err = run_cli(
         root,
         monkeypatch,
@@ -62,6 +63,7 @@ def test_output_file_and_compact(root, tmp_path, monkeypatch, capsys):
     assert code == 0
     assert out == ""
     assert json.loads(output.read_text(encoding="utf-8"))["overall_status"] == "pass"
+    output.unlink(missing_ok=True)
 
 
 def test_validator_selection_exclusion_and_threshold(root, monkeypatch, capsys):

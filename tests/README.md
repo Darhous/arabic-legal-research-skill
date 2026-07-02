@@ -5,6 +5,7 @@ This directory contains the Phase 3 automated test suite for the executable vali
 ## Structure
 
 - `tests/unit/` covers schema/model behavior, individual validators, and CLI behavior.
+- `tests/acceptance/` contains adversarial Phase 3 acceptance and hardening tests.
 - `tests/integration/` runs all fixtures from `examples/fixtures/manifest.json` and validates generated reports against `schemas/validation-report.schema.json`.
 - `tests/regression/` contains regression and robustness tests, including a synthetic large state.
 
@@ -15,7 +16,7 @@ pytest
 pytest --cov=legal_research_skill --cov-branch --cov-report=term-missing
 ```
 
-Coverage is configured in `pyproject.toml` with a minimum statement coverage threshold of 95% for the executable package.
+Coverage is configured in `pyproject.toml` with branch coverage enabled and a minimum package coverage threshold of 95%.
 
 ## Fixtures
 

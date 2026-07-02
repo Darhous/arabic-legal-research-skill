@@ -58,6 +58,19 @@ class PriorityResolutionValidator(BaseValidator):
             selected = PRIORITY_RANK.get(decision["selected_authority_level"])
             rejected = PRIORITY_RANK.get(decision["rejected_authority_level"])
             if selected is None or rejected is None:
+                findings.append(
+                    self.finding(
+                        "PRIORITY-001",
+                        f"Priority conflict uses an unknown authority level: {decision['conflict_id']}",
+                        evidence={
+                            "selected": decision["selected_authority_level"],
+                            "rejected": decision["rejected_authority_level"],
+                        },
+                        path=f"/instruction_context/priority_decisions/{decision['conflict_id']}",
+                        related_ids=(decision["conflict_id"],),
+                        code="unknown_priority_authority",
+                    )
+                )
                 continue
             if selected > rejected and not decision.get("explicit_user_authorization", False):
                 findings.append(

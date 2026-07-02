@@ -5,6 +5,7 @@ from typing import Any
 from legal_research_skill.constants import ALLOWED_HIERARCHY
 from legal_research_skill.models import ResearchState, ValidatorResult
 from legal_research_skill.validators.base import BaseValidator
+from legal_research_skill.validators.graph_utils import parent_cycles
 
 
 class HierarchyComplianceValidator(BaseValidator):
@@ -17,6 +18,17 @@ class HierarchyComplianceValidator(BaseValidator):
         headings = state.dict_value("body_hierarchy").get("nodes", [])
         by_id = {heading["heading_id"]: heading for heading in headings}
         sibling_orders: set[tuple[str | None, int]] = set()
+        for cycle in parent_cycles(headings, "heading_id", "parent_heading_id"):
+            findings.append(
+                self.finding(
+                    "HIERARCHY-001",
+                    "Body hierarchy contains a parent-reference cycle.",
+                    evidence={"cycle": list(cycle)},
+                    path="/body_hierarchy/nodes",
+                    related_ids=cycle,
+                    code="hierarchy_parent_cycle",
+                )
+            )
         for heading in headings:
             level = heading["level_type"]
             if level not in ALLOWED_HIERARCHY:

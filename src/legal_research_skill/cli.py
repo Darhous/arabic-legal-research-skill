@@ -120,8 +120,17 @@ def _write_or_print(text: str, output: Path | None) -> None:
     if output is None:
         print(text, end="")
         return
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(text, encoding="utf-8")
+    safe_output = _safe_output_path(output)
+    safe_output.parent.mkdir(parents=True, exist_ok=True)
+    safe_output.write_text(text, encoding="utf-8")
+
+
+def _safe_output_path(output: Path) -> Path:
+    root = Path.cwd().resolve()
+    resolved = output.resolve()
+    if resolved != root and root not in resolved.parents:
+        raise InputError("Output path must stay within the current working directory.")
+    return resolved
 
 
 def _print_error(message: str, args: argparse.Namespace, *, code: str, exit_code: int) -> int:

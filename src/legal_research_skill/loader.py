@@ -20,7 +20,9 @@ def read_json(path: Path) -> dict[str, Any]:
     if path.stat().st_size > MAX_INPUT_BYTES:
         raise InputError(f"Input file exceeds {MAX_INPUT_BYTES} bytes.")
     try:
-        text = path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8-sig")
+    except UnicodeDecodeError as exc:
+        raise InputError("Input file must be valid UTF-8 JSON.") from exc
     except OSError as exc:
         raise InputError(f"Cannot read input file: {path}") from exc
     try:

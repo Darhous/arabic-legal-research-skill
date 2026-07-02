@@ -25,6 +25,7 @@ This file maps executable Phase 3 components to Phase 2 rule sources and reviewe
 | Deterministic report sorting and IDs | `rules/output-contract.md` | `validators/final-qa-reviewer.md` | `tests/integration/test_manifest_pipeline.py` | `unsupported-output-claim.json` |
 | Output claim boundaries | `rules/output-contract.md` | `validators/docx-readiness-reviewer.md`, `validators/final-qa-reviewer.md` | `tests/unit/test_validators.py`, `tests/unit/test_edge_coverage.py` | `unsupported-output-claim.json` |
 | State gates | `rules/decision-engine.md` | `validators/final-qa-reviewer.md` | `tests/unit/test_validators.py`, `tests/unit/test_edge_coverage.py` | All fixtures |
+| Phase 3 adversarial acceptance checks | Phase 3 acceptance scope | Final QA contract | `tests/acceptance/test_phase3_adversarial.py` | Original manifest fixtures plus generated adversarial states |
 
 ## Schema Field Coverage
 

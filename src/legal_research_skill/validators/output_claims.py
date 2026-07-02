@@ -21,14 +21,27 @@ CLAIM_REQUIREMENTS = {
     "word-compatible": ("docx_generated", "word_manually_validated"),
     "automated legal validation": ("automated_legal_correctness_validated",),
     "legal correctness validated": ("automated_legal_correctness_validated",),
+    "legal correctness verified": ("automated_legal_correctness_validated",),
+    "rtl validated": ("rtl_rendering_validated",),
+    "toc updated": ("toc_updated_in_word",),
+    "per-page footnote restart verified": ("word_footnote_restart_validated",),
 }
 
 HONEST_CLAIMS = {
     "content validation completed",
     "text-level checks completed",
+    "text-level validation completed",
     "docx generation not performed",
     "microsoft word validation required",
     "citation review completed with verification gaps",
+    "citations include unresolved verification markers",
+}
+
+CLAIM_ALIASES = {
+    "docx_generated": "docx generated",
+    "print ready": "print-ready",
+    "submission ready": "submission-ready",
+    "word compatible": "word-compatible",
 }
 
 
@@ -41,8 +54,8 @@ class OutputClaimsValidator(BaseValidator):
         findings = []
         claims = state.dict_value("output_claims")
         evidence = claims.get("evidence", {})
-        requested = [claim.lower() for claim in claims.get("requested", [])]
-        prohibited = {claim.lower() for claim in claims.get("prohibited", [])}
+        requested = [_canonical_claim(claim) for claim in claims.get("requested", [])]
+        prohibited = {_canonical_claim(claim) for claim in claims.get("prohibited", [])}
         open_markers = [marker for marker in state.list_records("verification_markers") if marker["status"] == "open"]
 
         for claim in requested:
@@ -56,7 +69,7 @@ class OutputClaimsValidator(BaseValidator):
                     missing.append("no open Requires Verification markers")
                 if missing:
                     findings.append(self._unsupported(claim, missing))
-            elif claim not in HONEST_CLAIMS and "validated" in claim:
+            elif claim not in HONEST_CLAIMS and ("validated" in claim or "verified" in claim or "updated" in claim):
                 findings.append(self._unsupported(claim, ["unsupported validation claim"]))
         return self.result(findings, ("No DOCX generation or Microsoft Word validation is performed in Phase 3.",))
 
@@ -69,3 +82,8 @@ class OutputClaimsValidator(BaseValidator):
             related_ids=(claim,),
             code="unsupported_output_claim",
         )
+
+
+def _canonical_claim(claim: str) -> str:
+    normalized = " ".join(claim.strip().lower().replace("_", " ").split())
+    return CLAIM_ALIASES.get(normalized, normalized)

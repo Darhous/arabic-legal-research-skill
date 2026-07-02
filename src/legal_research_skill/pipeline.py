@@ -78,6 +78,8 @@ def run_pipeline(
             result = _skipped(validator, "dependency failed")
         else:
             result = validator.validate(state, raw_data)
+            if validator.name == "gate_readiness":
+                result = _apply_prior_blockers_to_gate(validator, result, by_name)
         if validator.name == "schema_integrity" and result.status == FindingStatus.FAIL:
             schema_blocked = True
         results.append(result)
@@ -114,6 +116,30 @@ def _skipped(validator: BaseValidator, reason: str) -> ValidatorResult:
         skipped_reason=reason,
         limitations=(),
     )
+
+
+def _apply_prior_blockers_to_gate(
+    validator: BaseValidator, result: ValidatorResult, prior_results: dict[str, ValidatorResult]
+) -> ValidatorResult:
+    blockers = tuple(
+        name
+        for name, prior_result in prior_results.items()
+        if name != "schema_integrity" and prior_result.status == FindingStatus.FAIL
+    )
+    if not blockers:
+        return result
+    findings = list(result.findings)
+    findings.append(
+        validator.finding(
+            "GATE-001",
+            "Prior validator blocker prevents state-machine advancement.",
+            evidence={"blocking_validators": list(blockers)},
+            path="/state_machine/gates",
+            related_ids=blockers,
+            code="prior_validator_blocker",
+        )
+    )
+    return validator.result(findings, result.limitations)
 
 
 def _collect_limitations(results: list[ValidatorResult]) -> tuple[str, ...]:

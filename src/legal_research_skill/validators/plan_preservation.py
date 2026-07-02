@@ -4,6 +4,7 @@ from typing import Any
 
 from legal_research_skill.models import ResearchState, ValidatorResult
 from legal_research_skill.validators.base import BaseValidator
+from legal_research_skill.validators.graph_utils import parent_cycles
 
 
 class PlanPreservationValidator(BaseValidator):
@@ -17,6 +18,7 @@ class PlanPreservationValidator(BaseValidator):
         status = plan.get("status")
         plan_nodes = {node["plan_node_id"]: node for node in plan.get("nodes", [])}
         body_nodes = state.dict_value("body_hierarchy").get("nodes", [])
+        body_by_id = {heading["heading_id"]: heading for heading in body_nodes}
         headings_by_plan = {
             heading.get("plan_node_id"): heading for heading in body_nodes if heading.get("plan_node_id")
         }
@@ -61,6 +63,17 @@ class PlanPreservationValidator(BaseValidator):
                     )
 
         if status in {"approved", "locked_approved", "incomplete_approved"}:
+            for cycle in parent_cycles(list(plan_nodes.values()), "plan_node_id", "parent_plan_node_id"):
+                findings.append(
+                    self.finding(
+                        "PLAN-001",
+                        "Approved plan contains a parent-reference cycle.",
+                        evidence={"cycle": list(cycle)},
+                        path="/approved_plan/nodes",
+                        related_ids=cycle,
+                        code="approved_plan_parent_cycle",
+                    )
+                )
             expected_order = [
                 node["plan_node_id"]
                 for node in sorted(plan_nodes.values(), key=lambda item: item["order"])
@@ -124,6 +137,26 @@ class PlanPreservationValidator(BaseValidator):
                             path=f"/body_hierarchy/nodes/{heading['heading_id']}",
                             related_ids=(node_id, heading["heading_id"]),
                             code="approved_plan_level_changed",
+                        )
+                    )
+                parent_heading_id = heading.get("parent_heading_id")
+                parent_heading = body_by_id.get(parent_heading_id) if parent_heading_id else None
+                body_parent_plan_id = parent_heading.get("plan_node_id") if parent_heading else None
+                if body_parent_plan_id != node.get("parent_plan_node_id"):
+                    related_ids = tuple(
+                        item for item in (node_id, heading["heading_id"], body_parent_plan_id) if item is not None
+                    )
+                    findings.append(
+                        self.finding(
+                            "PLAN-001",
+                            f"Approved plan parent changed for node {node_id}.",
+                            evidence={
+                                "approved_parent_plan_node_id": node.get("parent_plan_node_id"),
+                                "body_parent_plan_node_id": body_parent_plan_id,
+                            },
+                            path=f"/body_hierarchy/nodes/{heading['heading_id']}",
+                            related_ids=related_ids,
+                            code="approved_plan_parent_changed",
                         )
                     )
             extra = [heading for heading in body_nodes if not heading.get("plan_node_id")]
