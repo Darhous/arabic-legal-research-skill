@@ -1,48 +1,114 @@
 {
-  "schema_version": "1.0.0",
-  "generated_for": "final_project_acceptance",
-  "project": {
-    "name": "arabic-legal-research-skill",
-    "version": "0.3.0",
-    "branch": "main",
-    "phase_5_baseline": "6754707d78c07b303ad4b727560957fe43541304",
-    "release_tag": "v0.3.0",
-    "repository": "https://github.com/Darhous/arabic-legal-research-skill",
-    "release_url": "https://github.com/Darhous/arabic-legal-research-skill/releases/tag/v0.3.0"
+  "phase": 6,
+  "project": "arabic-legal-research-skill",
+  "version": "0.3.0",
+  "commit": "e50da461ca03b71c4ae669c857b2def680e45f70",
+  "branch": "main",
+  "remote": "https://github.com/Darhous/arabic-legal-research-skill.git",
+  "tag": "v0.3.0",
+  "tag_commit": "e50da461ca03b71c4ae669c857b2def680e45f70",
+  "release_url": "https://github.com/Darhous/arabic-legal-research-skill/releases/tag/v0.3.0",
+  "published": true,
+  "verdict": "PHASE 6 ACCEPTED; PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT",
+  "tests": {
+    "passed": 141,
+    "failed": 0,
+    "skipped": 1,
+    "coverage_percent": 95.03
+  },
+  "word_gate": {
+    "status": "BLOCKED",
+    "last_checkpoint": "dispatch_started",
+    "word_validated": false
+  },
+  "packaging": {
+    "status": "PASS",
+    "wheel": "arabic_legal_research_skill-0.3.0-py3-none-any.whl",
+    "sha256": "5d7a67cd936bacd770b15f6e5cb915f64d830d0834841ff2641f386758bfc246",
+    "installed_smoke": "PASS"
+  },
+  "github": {
+    "repository": "Darhous/arabic-legal-research-skill",
+    "visibility": "PUBLIC",
+    "default_branch": "main",
+    "release_name": "arabic-legal-research-skill 0.3.0",
+    "release_draft": false,
+    "release_prerelease": false,
+    "release_published_at": "2026-07-02T20:48:38Z",
+    "release_asset_digest": "sha256:5d7a67cd936bacd770b15f6e5cb915f64d830d0834841ff2641f386758bfc246"
+  },
+  "ci": {
+    "release_commit_status": "FAILURE",
+    "release_commit_run_url": "https://github.com/Darhous/arabic-legal-research-skill/actions/runs/28620379550",
+    "failed_step": "Build wheel",
+    "failure_reason": "python -m build --wheel --no-isolation reported missing setuptools>=68 and wheel on the GitHub runner.",
+    "closure_fix": "Install setuptools, wheel, and build explicitly before the no-isolation build step."
   },
   "gates": [
-    { "gate": "structural_pipeline", "required": true, "status": "PASS", "evidence": "DOCX structural artifact generation and validation passed.", "command": "pytest; build-artifact", "artifact": "artifact-manifest.json", "limitation": null },
-    { "gate": "word_gate", "required": false, "status": "BLOCKED", "evidence": "DispatchEx timed out at dispatch_started; worker terminated; no owned Word PID.", "command": "finalize-word --word-timeout-seconds 60", "artifact": "reports/word-environment-diagnostic.json", "limitation": "Environment COM dispatch timeout." },
-    { "gate": "packaging", "required": true, "status": "PASS", "evidence": "Wheel built and inspected.", "command": "pip wheel . --no-deps --no-build-isolation", "artifact": "arabic_legal_research_skill-0.3.0-py3-none-any.whl", "limitation": null },
-    { "gate": "installed_wheel_smoke", "required": true, "status": "PASS", "evidence": "Import, CLI help, schema check, and build-artifact passed outside repository root.", "command": "legal-research-skill build-artifact", "artifact": "installed site-packages", "limitation": "Runtime dependency jsonschema was supplied from local system-site packages." },
-    { "gate": "tests", "required": true, "status": "PASS", "evidence": "141 passed, 1 skipped; coverage 95.03%.", "command": "pytest", "artifact": "pytest output", "limitation": null },
-    { "gate": "ruff", "required": true, "status": "PASS", "evidence": "Format check and lint passed.", "command": "ruff format --check .; ruff check .", "artifact": "command output", "limitation": null },
-    { "gate": "compileall", "required": true, "status": "PASS", "evidence": "Source compile completed.", "command": "python -m compileall src", "artifact": "command output", "limitation": null },
-    { "gate": "security", "required": true, "status": "PASS", "evidence": "Static scan reviewed; no unsafe shell or global Word kill.", "command": "rg security pattern", "artifact": "review notes", "limitation": "Expected COM and process APIs remain for Word worker." },
-    { "gate": "readme", "required": true, "status": "PASS", "evidence": "README integrity tests passed.", "command": "pytest tests/acceptance/test_readme_integrity.py --no-cov", "artifact": "README.md", "limitation": null },
-    { "gate": "hero", "required": true, "status": "PASS", "evidence": "SVG XML valid and local-only.", "command": "ET.parse('assets/readme/hero.svg')", "artifact": "assets/readme/hero.svg", "limitation": null },
-    { "gate": "ci", "required": true, "status": "PASS", "evidence": "Workflow added for tests, Ruff, build, wheel content, and structural smoke.", "command": "manual review", "artifact": ".github/workflows/ci.yml", "limitation": "Does not run real Word." },
-    { "gate": "clean_worktree_audit", "required": true, "status": "PASS", "evidence": "Compile, Ruff, pytest, wheel build, install smoke, README, hero, and status passed.", "command": "git worktree add tests_tmp/phase6-clean-worktree HEAD", "artifact": "clean worktree command output", "limitation": "Pytest required escalated run due Windows temp ACL under sandbox." },
-    { "gate": "git", "required": true, "status": "PASS", "evidence": "Working tree clean before final reports; logical commits created.", "command": "git status --short; git log --oneline --decorate -8", "artifact": "git history", "limitation": null },
-    { "gate": "github_push", "required": true, "status": "PASS", "evidence": "Remote repository, branch, authentication, and final push command verified for main.", "command": "git push origin main", "artifact": "GitHub branch", "limitation": null },
-    { "gate": "github_release", "required": true, "status": "PASS", "evidence": "Release target v0.3.0 matches the project version and release URL.", "command": "gh release create v0.3.0", "artifact": "GitHub Release", "limitation": "Word limitation must remain in release notes." }
+    {
+      "gate": "structural_pipeline",
+      "required": true,
+      "status": "PASS",
+      "evidence": "DOCX structural artifact generation and validation passed in Phase 6 evidence."
+    },
+    {
+      "gate": "word_gate",
+      "required": false,
+      "status": "BLOCKED",
+      "evidence": "DispatchEx timed out at dispatch_started; no owned Word PID was acquired."
+    },
+    {
+      "gate": "packaging",
+      "required": true,
+      "status": "PASS",
+      "evidence": "Wheel was built, inspected, attached to the GitHub release, and has a published asset digest."
+    },
+    {
+      "gate": "installed_wheel_smoke",
+      "required": true,
+      "status": "PASS",
+      "evidence": "Phase 6 installed-wheel smoke passed from outside the repository root."
+    },
+    {
+      "gate": "github_push",
+      "required": true,
+      "status": "PASS",
+      "evidence": "Before closure changes, local HEAD, origin/main, and v0.3.0 all pointed at e50da461ca03b71c4ae669c857b2def680e45f70."
+    },
+    {
+      "gate": "github_tag",
+      "required": true,
+      "status": "PASS",
+      "evidence": "Local and remote v0.3.0 exist and point at e50da461ca03b71c4ae669c857b2def680e45f70."
+    },
+    {
+      "gate": "github_release",
+      "required": true,
+      "status": "PASS",
+      "evidence": "GitHub release v0.3.0 exists, is not draft, is not prerelease, and has the release URL recorded here."
+    },
+    {
+      "gate": "github_actions",
+      "required": true,
+      "status": "FAIL",
+      "evidence": "The GitHub Actions run for the published release commit failed at Build wheel."
+    }
   ],
-  "summary": {
-    "structural_pipeline": "PASS",
-    "word_gate": "BLOCKED",
-    "packaging": "PASS",
-    "installed_wheel_smoke": "PASS",
-    "end_to_end": "PASS",
-    "adversarial_testing": "PASS",
-    "security": "PASS",
-    "reproducibility": "PASS",
-    "readme": "PASS",
-    "hero": "PASS",
-    "footer": "PASS",
-    "ci": "PASS",
-    "clean_worktree_audit": "PASS",
-    "tests": "141 passed, 1 skipped",
-    "coverage": "95.03%",
-    "final_verdict": "PHASE 6 ACCEPTED; PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION"
-  }
+  "limitations": [
+    "Microsoft Word COM validation remains environment-blocked at dispatch_started.",
+    "No Word-validated output exists.",
+    "No print-ready, court-ready, or submission-ready claim is made.",
+    "No legal correctness or source authenticity verification is performed.",
+    "No PyPI publication is claimed.",
+    "The published v0.3.0 tag must not be force-moved; the closure CI fix would require a later explicit release decision to become part of a tagged release."
+  ],
+  "prohibited_claims": [
+    "WORD_VALIDATED",
+    "print-ready",
+    "court-ready",
+    "submission-ready",
+    "legal correctness verified",
+    "source authenticity verified",
+    "PyPI published"
+  ]
 }

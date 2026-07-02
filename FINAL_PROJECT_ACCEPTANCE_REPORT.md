@@ -9,14 +9,21 @@ Reproducibility: PASS
 README: PASS
 Hero: PASS
 Footer: PASS
-CI: PASS
+CI: FAIL on published release commit; closure fix prepared
 Clean Worktree Audit: PASS
 Git: PASS
 GitHub Push: PASS
+GitHub Tag: PASS
 GitHub Release: PASS
 Tests: PASS, 141 passed, 1 skipped
 Coverage: PASS, 95.03%
-Final Verdict: PHASE 6 ACCEPTED; PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION
+Final Verdict: PHASE 6 ACCEPTED; PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT
+
+Commit: `e50da461ca03b71c4ae669c857b2def680e45f70`
+Tag: `v0.3.0`
+Release URL: `https://github.com/Darhous/arabic-legal-research-skill/releases/tag/v0.3.0`
+Remote: `https://github.com/Darhous/arabic-legal-research-skill.git`
+Branch: `main`
 
 | Gate | Required | Status | Evidence | Command | Artifact | Limitation |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -31,11 +38,15 @@ Final Verdict: PHASE 6 ACCEPTED; PROJECT RELEASE READY WITH DOCUMENTED WORD ENVI
 | README | Yes | PASS | Arabic README, badges, links, commands, limitations. | `pytest tests/acceptance/test_readme_integrity.py --no-cov` | `README.md` | None |
 | Hero | Yes | PASS | SVG XML valid, no scripts or external resources. | `python -c ET.parse(...)` | `assets/readme/hero.svg` | None |
 | Footer | Yes | PASS | Five links in required order and exact signature. | README integrity test | `README.md` | None |
-| CI | Yes | PASS | Workflow covers Python, Ruff, pytest, build, wheel smoke, structural smoke. | Manual review | `.github/workflows/ci.yml` | No real Word in CI |
+| CI | Yes | FAIL | GitHub Actions run for `e50da461ca03b71c4ae669c857b2def680e45f70` failed at `Build wheel`: missing `setuptools>=68` and `wheel` before `python -m build --wheel --no-isolation`. Closure change installs `setuptools`, `wheel`, and `build` explicitly. | `gh api repos/Darhous/arabic-legal-research-skill/actions/runs` | `https://github.com/Darhous/arabic-legal-research-skill/actions/runs/28620379550` | Existing `v0.3.0` tag is already published and must not be force-moved. |
 | Clean worktree audit | Yes | PASS | Clean HEAD audit passed. | `git worktree add ... HEAD`; pytest/build/install smoke | clean worktree output | Sandbox temp ACL required escalated pytest |
 | GitHub repository readiness | Yes | PASS | Repo verified as public `Darhous/arabic-legal-research-skill`; description/topics updated. | `gh repo view`; `gh repo edit` | GitHub repo metadata | Visibility not changed |
+| GitHub tag | Yes | PASS | Local and remote `v0.3.0` exist and point at `e50da461ca03b71c4ae669c857b2def680e45f70`. | `git tag --list`; `git ls-remote --tags origin` | `v0.3.0` | Tag predates closure CI fix. |
+| GitHub release | Yes | PASS | Release exists, is not draft, is not prerelease, and includes the wheel asset with SHA-256 digest. | `gh release view v0.3.0 --json ...` | GitHub Release | Release commit has failed CI. |
 
 ```text
 PHASE 6 ACCEPTED
-PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION
+PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT
 ```
+
+The GitHub Release for `v0.3.0` is real and published. However, a release-blocking CI defect was discovered after publication: the release commit's GitHub Actions run failed in the wheel build step. The fix is limited to CI dependency installation and does not change runtime behavior. Because `v0.3.0` already exists locally and remotely and points to the earlier published commit, it must not be moved with force.

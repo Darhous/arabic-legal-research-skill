@@ -70,6 +70,8 @@ Added `.github/workflows/ci.yml` for Python 3.11 and 3.12:
 - packaged schema smoke
 - structural artifact smoke without real Word
 
+Post-release verification found that the GitHub Actions run for `e50da461ca03b71c4ae669c857b2def680e45f70` failed at `Build wheel`. The no-isolation build step required `setuptools>=68` and `wheel` in the runner environment. The closure fix installs `setuptools`, `wheel`, and `build` explicitly before running the build step. This is a CI dependency fix only and does not change package runtime behavior.
+
 ## 6. README, Hero, Footer
 
 - README rewritten in Arabic.
@@ -128,8 +130,12 @@ Sandbox-local pytest attempts failed on Windows temp ACLs; the successful clean 
 - Remote: `https://github.com/Darhous/arabic-legal-research-skill.git`.
 - GitHub repo: `Darhous/arabic-legal-research-skill`.
 - Visibility: PUBLIC.
-- Planned tag: `v0.3.0`.
+- Tag: `v0.3.0`.
 - Release URL: `https://github.com/Darhous/arabic-legal-research-skill/releases/tag/v0.3.0`.
+- Release status: published, not draft, not prerelease.
+- Published release asset: `arabic_legal_research_skill-0.3.0-py3-none-any.whl`.
+- Published release asset SHA-256: `5d7a67cd936bacd770b15f6e5cb915f64d830d0834841ff2641f386758bfc246`.
+- GitHub Actions status for release commit: FAIL at wheel build.
 
 ## 11. Remaining Limitations
 
@@ -143,5 +149,5 @@ Sandbox-local pytest attempts failed on Windows temp ACLs; the successful clean 
 
 ```text
 PHASE 6 ACCEPTED
-PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION
+PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT
 ```

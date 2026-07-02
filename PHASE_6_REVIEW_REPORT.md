@@ -19,7 +19,12 @@ None.
 
 ### High
 
-None.
+1. GitHub Actions failed on the published release commit.
+   - Evidence: `https://github.com/Darhous/arabic-legal-research-skill/actions/runs/28620379550`.
+   - Failed step: `Build wheel`.
+   - Cause: `python -m build --wheel --no-isolation` reported missing `setuptools>=68` and `wheel` on the GitHub runner.
+   - Fix prepared: install `setuptools`, `wheel`, and `build` explicitly before the no-isolation build step.
+   - Residual risk: `v0.3.0` is already published and must not be force-moved; a later explicit release decision is required if the fix must be part of a tagged release.
 
 ### Medium
 
@@ -45,7 +50,7 @@ None.
 - Clean worktree pytest: `141 passed, 1 skipped`, coverage `95.03%`.
 - Ruff: PASS.
 - Compileall: PASS.
-- Wheel build: PASS.
+- Wheel build: PASS locally in Phase 6; FAIL in GitHub Actions on the published release commit.
 - Installed-wheel smoke: PASS.
 - README integrity: PASS.
 - Hero XML: PASS.
@@ -53,9 +58,9 @@ None.
 
 ## Reviewer Verdict
 
-No release-blocking code, docs, packaging, or claim-boundary defects remain. The only remaining limitation is the documented Microsoft Word COM dispatch timeout.
+A release-blocking CI defect was found after the `v0.3.0` release was published. Runtime code, docs, packaging evidence, and claim boundaries remain otherwise bounded by the documented Microsoft Word COM dispatch timeout.
 
 ```text
 PHASE 6 ACCEPTED
-PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION
+PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT
 ```

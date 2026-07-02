@@ -1,34 +1,30 @@
 # Final Release Checklist
 
 - [x] Read-only audit completed.
-- [x] Phase 5 checkpoint tag created locally.
-- [x] Word environment diagnosed.
-- [x] Word worker STA initialization added.
-- [x] Word timeout path verified.
-- [x] No unowned Word process killed.
-- [x] Packaging wheel built.
-- [x] Wheel content inspected.
-- [x] Installed-wheel smoke passed from outside repo root.
-- [x] Runtime packaged schemas verified.
-- [x] Static security scan reviewed.
-- [x] Compileall passed.
-- [x] Ruff format and lint passed.
-- [x] Pytest passed with coverage >= 95%.
-- [x] README rewritten in Arabic.
-- [x] Hero SVG added and XML-validated.
-- [x] Footer links and signature verified.
-- [x] CI workflow added.
-- [x] Public repository files added.
-- [x] Clean worktree audit passed.
-- [x] GitHub repo identity and visibility verified.
-- [x] Repository description and topics updated.
-- [x] Push final commits.
-- [x] Create tag `v0.3.0`.
-- [x] Create GitHub Release for `v0.3.0`.
+- [x] Local tests passed in Phase 6 evidence: `141 passed, 1 skipped`.
+- [x] Coverage threshold met in Phase 6 evidence: `95.03%`.
+- [x] Ruff passed in Phase 6 evidence.
+- [x] Compileall passed in Phase 6 evidence.
+- [x] Wheel build passed in Phase 6 evidence.
+- [x] Installed-wheel smoke passed in Phase 6 evidence.
+- [x] README integrity passed in Phase 6 evidence.
+- [x] Hero integrity passed in Phase 6 evidence.
+- [x] Footer integrity passed in Phase 6 evidence.
+- [x] Security review completed in Phase 6 evidence.
+- [x] Clean worktree audit passed in Phase 6 evidence.
+- [x] Final release commit existed before closure: `e50da461ca03b71c4ae669c857b2def680e45f70`.
+- [x] Push verified for release commit: local `HEAD` matched `origin/main`.
+- [x] Tag exists locally: `v0.3.0`.
+- [x] Tag exists remotely: `v0.3.0`.
+- [x] GitHub Release exists and is published for `v0.3.0`.
+- [x] Post-release GitHub metadata verified.
+- [ ] GitHub Actions success for the published release commit.
 
 Final local verdict:
 
 ```text
 PHASE 6 ACCEPTED
-PROJECT RELEASE READY WITH DOCUMENTED WORD ENVIRONMENT LIMITATION
+PROJECT RELEASE BLOCKED BY EXISTING TAG CONFLICT
 ```
+
+Reason: after release publication, the GitHub Actions run for the published release commit failed at wheel build because `setuptools>=68` and `wheel` were not installed before `python -m build --wheel --no-isolation`. A limited CI dependency fix is prepared in the closure changes. The already published `v0.3.0` tag must not be force-moved.
