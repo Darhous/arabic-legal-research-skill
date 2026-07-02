@@ -1,0 +1,210 @@
+{
+  "schema_version": "0.3.0",
+  "task_identifier": "task-duplicate-identifiers",
+  "user_request": "إعداد تحقق بنيوي لمهمة بحث قانوني عربية صغيرة دون DOCX.",
+  "research_metadata": {
+    "research_title": { "status": "Known", "value": "الحماية القانونية للبيانات الشخصية" },
+    "required_output_type": "docx_ready_source",
+    "page_count_target": { "status": "Not Applicable", "value": null }
+  },
+  "instruction_context": {
+    "priority_decisions": [
+      {
+        "conflict_id": "conf-user-profile",
+        "conflict_type": "user_vs_profile",
+        "selected_authority_level": "current_user",
+        "rejected_authority_level": "generic_profile",
+        "specificity_recorded": true,
+        "recency_recorded": true,
+        "resolution_reason": "Current user request limits work to text-level validation.",
+        "task_memory_update": true,
+        "explicit_user_authorization": false
+      }
+    ],
+    "unresolved_conflicts": []
+  },
+  "jurisdiction": { "status": "Known", "value": "Egypt" },
+  "institution_profile": "generic-arabic-university",
+  "language": { "primary": "Arabic", "direction": "RTL" },
+  "research_type": "legal_academic_paper",
+  "source_restrictions": {
+    "mode": "none",
+    "exclusive_source_ids": [],
+    "mandatory_missing_files": []
+  },
+  "approved_plan": {
+    "status": "proposed",
+    "source": { "status": "Derived", "value": "System proposed plan because no approved plan exists." },
+    "nodes": [
+      {
+        "plan_node_id": "plan-part-1",
+        "parent_plan_node_id": null,
+        "node_type": "part",
+        "display_label": "قسم",
+        "title": "الإطار العام للحماية القانونية",
+        "order": 1,
+        "locked": false,
+        "omitted": false,
+        "omission_reason": null
+      }
+    ]
+  },
+  "body_hierarchy": {
+    "nodes": [
+      {
+        "heading_id": "heading-part-1",
+        "parent_heading_id": null,
+        "plan_node_id": "plan-part-1",
+        "level_type": "part",
+        "display_label": "قسم",
+        "title": "الإطار العام للحماية القانونية",
+        "order": 1
+      }
+    ]
+  },
+  "methodology": {
+    "profile": "generic-arabic-university",
+    "components": {
+      "preface": { "status": "present", "content": "يمهد البحث لموضوع حماية البيانات الشخصية في البيئة الرقمية." },
+      "problem": { "status": "present", "content": "تتمثل المشكلة في تحديد حدود الحماية القانونية عند معالجة البيانات الشخصية." },
+      "importance": { "status": "present", "content": "تظهر الأهمية في اتصال الموضوع بالحقوق والحريات والمعاملات الرقمية." },
+      "previous_studies": { "status": "present", "content": "يعرض البحث الدراسات السابقة المتصلة بالحماية القانونية للبيانات." },
+      "objectives": { "status": "present", "content": "يهدف البحث إلى بيان نطاق الحماية والالتزامات القانونية الأساسية." },
+      "methodology": { "status": "present", "content": "يعتمد البحث على المنهج التحليلي مع الاستعانة بالمنهج المقارن عند الحاجة." },
+      "scope": { "status": "present", "content": "ينحصر النطاق في القواعد العامة لحماية البيانات الشخصية." },
+      "hypotheses": { "status": "present", "content": "يفترض البحث أن فعالية الحماية ترتبط بوضوح الالتزامات والجزاءات." },
+      "questions": { "status": "present", "content": "يثير البحث سؤال مدى كفاية القواعد القانونية لحماية البيانات الشخصية." },
+      "tools": { "status": "present", "content": "يعتمد البحث على تحليل النصوص القانونية والمراجع الأكاديمية المتاحة." },
+      "concepts": { "status": "present", "content": "يوضح البحث مفاهيم البيانات الشخصية والمعالجة والمسؤول عن المعالجة." },
+      "difficulties": { "status": "present", "content": "تتمثل الصعوبة في تغير التطبيقات التقنية وتعدد صور المعالجة." },
+      "plan_presentation": { "status": "present", "content": "يقسم البحث إلى إطار عام ثم تطبيقات الحماية القانونية." }
+    },
+    "conclusion": {
+      "summary": { "status": "present", "content": "يلخص البحث الأساس القانوني للحماية والالتزامات المرتبطة بها." },
+      "findings": { "status": "present", "content": "خلص البحث إلى أن وضوح الالتزامات يعزز الحماية العملية للبيانات." },
+      "recommendations": { "status": "present", "content": "يوصي البحث بتدقيق سياسات المعالجة وتحديث ضمانات الشفافية." }
+    }
+  },
+  "sources": [
+    {
+      "source_id": "src-law-1",
+      "title": "قانون حماية البيانات الشخصية",
+      "source_type": "law",
+      "authority_level": "primary_legal",
+      "authors": [],
+      "institution": "الجريدة الرسمية",
+      "jurisdiction": "Egypt",
+      "publication_date": "2020",
+      "url_or_location": "Official Gazette reference",
+      "uploaded_file": null,
+      "exclusive_use": false,
+      "verification_status": "verified",
+      "verification_notes": "Illustrative verified fixture source.",
+      "bibliographic_data": { "title": "قانون حماية البيانات الشخصية", "year": "2020" },
+      "used_in_research": true,
+      "include_in_bibliography": true
+    },
+    {
+      "source_id": "src-law-1",
+      "title": "مصدر مكرر",
+      "source_type": "law",
+      "authority_level": "primary_legal",
+      "authors": [],
+      "institution": "الجريدة الرسمية",
+      "jurisdiction": "Egypt",
+      "publication_date": "2020",
+      "url_or_location": "Official Gazette reference",
+      "uploaded_file": null,
+      "exclusive_use": false,
+      "verification_status": "verified",
+      "verification_notes": "Duplicate id fixture.",
+      "bibliographic_data": { "title": "مصدر مكرر", "year": "2020" },
+      "used_in_research": false,
+      "include_in_bibliography": false
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "cite-1",
+      "source_id": "src-law-1",
+      "claim_id": "claim-1",
+      "usage_type": "support",
+      "direct_quote": false,
+      "quote_marks_present": false,
+      "location": "مادة 1",
+      "verification_status": "verified",
+      "marker_id": null,
+      "footnote_required": true
+    }
+  ],
+  "footnotes": [
+    {
+      "footnote_id": "fn-1",
+      "citation_ids": ["cite-1"],
+      "content": "إحالة إلى قانون حماية البيانات الشخصية.",
+      "purpose_reason": null,
+      "placement_reference": "body:heading-part-1",
+      "numbering_intent": "sequential",
+      "verification_status": "verified"
+    }
+  ],
+  "bibliography": [
+    {
+      "bibliography_id": "bib-1",
+      "source_ids": ["src-law-1"],
+      "entry_text": "قانون حماية البيانات الشخصية، الجريدة الرسمية، 2020.",
+      "used_source": true,
+      "authorized_unused": false,
+      "authorization_reason": null,
+      "verification_status": "verified"
+    }
+  ],
+  "formatting_profile": {
+    "style": "black_and_white_print",
+    "official_template_status": "not_required",
+    "rtl_validated": false,
+    "docx_artifact": null
+  },
+  "assumptions": ["DOCX generation is outside Phase 3."],
+  "unresolved_questions": [],
+  "verification_markers": [],
+  "state_machine": {
+    "current_state": "Final QA",
+    "gates": [
+      {
+        "gate_id": "gate-text-validation",
+        "status": "pass",
+        "decision": "PROCEED",
+        "required_validators": ["schema_integrity", "cross_reference", "output_claims"],
+        "blockers": []
+      }
+    ],
+    "next_allowed_state": "Delivery",
+    "rerun_required": false
+  },
+  "reviewer_results": [
+    {
+      "review_result_id": "review-plan-1",
+      "reviewer": "Plan Reviewer",
+      "status": "PASS",
+      "decision": "PROCEED",
+      "affected_entity_type": "plan_node",
+      "affected_entity_id": "plan-part-1"
+    }
+  ],
+  "validation_history": ["Fixture created for Phase 3 validation tests."],
+  "output_claims": {
+    "requested": ["content validation completed", "text-level checks completed", "docx generation not performed"],
+    "allowed": ["content validation completed", "text-level checks completed", "docx generation not performed"],
+    "prohibited": ["print-ready", "submission-ready", "all citations verified as an external authenticity claim"],
+    "evidence": {
+      "docx_generated": false,
+      "docx_structurally_validated": false,
+      "word_manually_validated": false,
+      "all_reviewers_passed": true,
+      "all_sources_verified": true,
+      "submission_requirements_confirmed": false,
+      "automated_legal_correctness_validated": false
+    }
+  }
+}

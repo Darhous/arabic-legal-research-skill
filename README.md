@@ -14,6 +14,9 @@ The repository is designed as a **Legal Research Production Operating System**, 
 - Separates methodology, structure, language, citation, footnote, bibliography, formatting, and readiness rules.
 - Requires internal reviewers to pass before final delivery.
 - Treats unverified citations as `Requires Verification` instead of fabricating sources.
+- Provides Phase 3 JSON Schema validation for structured research state.
+- Provides Phase 3 executable text-level validators for schema integrity, cross references, priority decisions, approved plans, hierarchy, methodology, citations, footnotes, bibliography, verification markers, output claims, and gate readiness.
+- Provides a Python CLI that emits machine-readable JSON reports and human-readable summaries.
 - Prepares work toward print-ready DOCX generation and validation without claiming those steps exist in Phase 2.
 
 ## What It Does Not Do
@@ -23,6 +26,9 @@ The repository is designed as a **Legal Research Production Operating System**, 
 - It does not treat generic profiles as stronger than uploaded university instructions.
 - It does not claim print readiness when DOCX formatting, footnotes, table of contents, or reviewer gates are unvalidated.
 - It does not currently implement DOCX generation scripts.
+- It does not automate source authenticity checks over the internet.
+- It does not determine legal correctness automatically.
+- It does not validate final Microsoft Word rendering or print readiness.
 
 ## Methodological Basis
 
@@ -47,6 +53,14 @@ The repository treats good legal academic research as depending on three connect
 ├── CODEX.md
 ├── IMPLEMENTATION_REPORT.md
 ├── PHASE_2_REPORT.md
+├── PHASE_3_IMPLEMENTATION_REPORT.md
+├── pyproject.toml
+├── schemas/
+│   ├── research-state.schema.json
+│   ├── validation-report.schema.json
+│   └── README.md
+├── src/
+│   └── legal_research_skill/
 ├── rules/
 │   ├── decision-engine.md
 │   ├── priority-hierarchy.md
@@ -85,9 +99,13 @@ The repository treats good legal academic research as depending on three connect
 ├── scripts/
 │   └── README.md
 ├── tests/
-│   └── README.md
+│   ├── README.md
+│   ├── integration/
+│   ├── regression/
+│   └── unit/
 └── examples/
-    └── README.md
+    ├── README.md
+    └── fixtures/
 ```
 
 ## Operating Model
@@ -178,17 +196,16 @@ Both preserve the same academic structure and differ only in visual styling.
 
 ## Current Status
 
-Phase 2 upgrades the repository from passive rule documentation to a documented production operating model. It now defines execution phases, decisions, priority resolution, task memory, error recovery, reviewer contracts, and final output obligations.
+Phase 3 adds an executable research-state validation substrate. It includes JSON Schemas, Python domain models, deterministic validation reports, a CLI, representative fixtures, and automated tests for text-level and structural validation.
 
-Scripted DOCX generation, executable validators, binary templates, fixtures, and automated tests are intentionally not implemented in this phase.
+Scripted DOCX generation, binary DOCX templates, Microsoft Word automation, source authenticity verification, legal correctness determination, and final RTL rendering validation remain intentionally unimplemented.
 
 ## Roadmap
 
-- Phase 3: define structured research input schema and minimal fixtures.
-- Phase 4: implement non-DOCX executable validators for plans, methodology, citations, and hierarchy.
-- Phase 5: implement DOCX generation and formatting validation.
-- Phase 6: add template assets and fixture-based regression tests.
-- Phase 7: publish release documentation and contribution policy.
+- Phase 4: implement DOCX generation or a richer non-DOCX artifact flow, depending on the next accepted scope.
+- Later phase: implement DOCX structural validation and Microsoft Word/manual validation workflows.
+- Later phase: add template assets and release documentation.
+- Later phase: perform the professional GitHub README visual redesign.
 
 ## Safety and Academic Integrity Notice
 
@@ -198,7 +215,7 @@ The Skill must never fabricate authorities, cases, laws, books, articles, Hadith
 
 ## Limitations
 
-- Current files define operating logic and reviewer contracts only.
+- Current executable validation is text-level and structural.
 - No script currently generates DOCX files.
-- No automated test suite currently runs.
+- The automated test suite validates the Phase 3 Python substrate, schemas, reports, fixtures, and CLI.
 - Microsoft Word behavior, including table of contents updates and per-page footnote numbering restart, still requires future implementation and validation.

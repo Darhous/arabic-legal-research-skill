@@ -1,0 +1,165 @@
+{
+  "schema_version": "0.3.0",
+  "fixtures": [
+    {
+      "path": "examples/fixtures/valid/minimal-valid.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "PROCEED",
+      "expected_failing_validators": [],
+      "expected_rule_ids": [],
+      "expected_minimum_finding_count": 0,
+      "forbidden_findings": ["CLAIM-001", "PLAN-001"],
+      "why": "Small structurally valid text-level research state with honest non-DOCX claims."
+    },
+    {
+      "path": "examples/fixtures/valid/approved-plan-locked.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "PROCEED",
+      "expected_failing_validators": [],
+      "expected_rule_ids": [],
+      "expected_minimum_finding_count": 0,
+      "forbidden_findings": ["PLAN-001", "PLAN-002"],
+      "why": "Locked professor plan is preserved exactly by body hierarchy."
+    },
+    {
+      "path": "examples/fixtures/valid/requires-verification-valid.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": [],
+      "expected_rule_ids": ["CITATION-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": ["CLAIM-001"],
+      "why": "Structurally valid state with open Requires Verification marker and limited claims."
+    },
+    {
+      "path": "examples/fixtures/invalid/duplicate-identifiers.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["schema_integrity"],
+      "expected_rule_ids": ["SCHEMA-002"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Duplicate source_id must be detected beyond JSON Schema uniqueness."
+    },
+    {
+      "path": "examples/fixtures/invalid/dangling-citation-source.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["cross_reference"],
+      "expected_rule_ids": ["XREF-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Citation references a missing source_id."
+    },
+    {
+      "path": "examples/fixtures/invalid/orphan-footnote.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["footnote_linkage"],
+      "expected_rule_ids": ["FOOTNOTE-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Footnote has neither citation linkage nor a legitimate purpose."
+    },
+    {
+      "path": "examples/fixtures/invalid/approved-plan-reordered.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["plan_preservation"],
+      "expected_rule_ids": ["PLAN-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Locked approved plan order is changed in body hierarchy."
+    },
+    {
+      "path": "examples/fixtures/invalid/approved-plan-heading-changed.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["plan_preservation"],
+      "expected_rule_ids": ["PLAN-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Locked approved plan heading title is changed."
+    },
+    {
+      "path": "examples/fixtures/invalid/hierarchy-level-jump.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["hierarchy_compliance"],
+      "expected_rule_ids": ["HIERARCHY-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Body heading starts at a deeper level without parent."
+    },
+    {
+      "path": "examples/fixtures/invalid/missing-methodology-elements.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["methodology_completeness"],
+      "expected_rule_ids": ["METHOD-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Required methodology component is placeholder content."
+    },
+    {
+      "path": "examples/fixtures/invalid/bibliography-missing-used-source.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["bibliography_completeness"],
+      "expected_rule_ids": ["BIBLIO-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Used source requiring bibliography has no entry."
+    },
+    {
+      "path": "examples/fixtures/invalid/bibliography-orphan-entry.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["bibliography_completeness"],
+      "expected_rule_ids": ["BIBLIO-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Unused source appears in bibliography without authorization."
+    },
+    {
+      "path": "examples/fixtures/invalid/invalid-verification-marker.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "REVISE",
+      "expected_failing_validators": ["verification_markers"],
+      "expected_rule_ids": ["VERIFY-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Verification marker uses a banned internal variant."
+    },
+    {
+      "path": "examples/fixtures/invalid/unsupported-output-claim.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "FAIL",
+      "expected_failing_validators": ["output_claims"],
+      "expected_rule_ids": ["CLAIM-001"],
+      "expected_minimum_finding_count": 3,
+      "forbidden_findings": [],
+      "why": "Claims print-ready, DOCX generated, Word-compatible, and automated legal validation without evidence."
+    },
+    {
+      "path": "examples/fixtures/invalid/unresolved-priority-conflict.json",
+      "expected_schema_valid": true,
+      "expected_overall_decision": "PAUSE",
+      "expected_failing_validators": ["priority_resolution"],
+      "expected_rule_ids": ["PRIORITY-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Same-authority conflict is unresolved."
+    },
+    {
+      "path": "examples/fixtures/invalid/malformed-schema.json",
+      "expected_schema_valid": false,
+      "expected_overall_decision": "FAIL",
+      "expected_failing_validators": ["schema_integrity"],
+      "expected_rule_ids": ["SCHEMA-001"],
+      "expected_minimum_finding_count": 1,
+      "forbidden_findings": [],
+      "why": "Schema version and identifier are invalid."
+    }
+  ]
+}

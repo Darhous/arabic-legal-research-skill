@@ -1,27 +1,24 @@
 # Tests
 
-This directory currently contains no executable tests. It documents the test coverage required before future automated validation claims can be made.
+This directory contains the Phase 3 automated test suite for the executable validation substrate.
 
-## Future Test Areas
+## Structure
 
-- Required repository files exist.
-- `SKILL.md` references all rule modules.
-- Required document order is preserved.
-- Methodological introduction components are present.
-- Approved plan immutability is enforced.
-- Only `قسم → باب → فصل → مبحث → مطلب` appears as body hierarchy.
-- Prohibited body levels are rejected unless explicitly allowed.
-- Citation rules distinguish direct and indirect quotation.
-- Unverified sources are marked `Requires Verification`.
-- Footnote policy prevents fake or decorative notes.
-- Bibliography entries contain required metadata.
-- Colored and black-and-white profile outputs preserve identical structure.
-- DOCX formatting checks detect missing RTL, page size, margins, heading styles, and `مبحث` page breaks.
+- `tests/unit/` covers schema/model behavior, individual validators, and CLI behavior.
+- `tests/integration/` runs all fixtures from `examples/fixtures/manifest.json` and validates generated reports against `schemas/validation-report.schema.json`.
+- `tests/regression/` contains regression and robustness tests, including a synthetic large state.
 
-## Test Philosophy
+## Commands
 
-Tests should verify behavior, not just file presence. When a requirement cannot be automatically verified, tests should require a clear warning in the generated QA report.
+```bash
+pytest
+pytest --cov=legal_research_skill --cov-branch --cov-report=term-missing
+```
 
-## Future Fixtures
+Coverage is configured in `pyproject.toml` with a minimum statement coverage threshold of 95% for the executable package.
 
-Use minimal illustrative fixtures. Do not include copyrighted source excerpts or invented legal references presented as real sources.
+## Fixtures
+
+The test suite uses `examples/fixtures/manifest.json` rather than relying on fixture file names alone. Each manifest entry records expected schema validity, overall decision, failing validators, rule IDs, minimum finding counts, and forbidden findings.
+
+The tests do not perform DOCX generation, Word automation, internet verification, legal correctness review, or final RTL rendering validation.

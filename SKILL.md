@@ -67,6 +67,19 @@ Use these reviewer contracts before delivery:
 
 The Skill must not deliver final work unless all required reviewer contracts pass.
 
+## Phase 3 Executable Validation
+
+When structured research-state JSON is available, the Phase 3 CLI can run text-level and structural checks:
+
+```bash
+legal-research-skill validate <input.json>
+legal-research-skill schema-check <input.json>
+legal-research-skill list-validators
+legal-research-skill explain PLAN-001
+```
+
+These validators support schema, cross-reference, priority, approved-plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness checks. They do not generate DOCX files or validate Microsoft Word rendering.
+
 ## Execution State Machine
 
 The canonical state machine is defined in `rules/decision-engine.md`. The Skill must follow those states in order:

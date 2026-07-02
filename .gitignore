@@ -1,0 +1,10 @@
+.coverage
+.pytest_cache/
+.pytest-tmp/
+.ruff_cache/
+pytest-cache-files-*/
+tests_tmp/
+__pycache__/
+*.py[cod]
+*.egg-info/
+htmlcov/

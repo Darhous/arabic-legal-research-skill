@@ -28,6 +28,12 @@ The repository must support:
 - Do not bury operational rules in README only.
 - Do not create prompt-only behavior where validation is required.
 - Do not claim DOCX readiness unless generation and validation checks pass.
+- Keep `schema_version`, `report_schema_version`, package version, and validator versions aligned.
+- Add new rule IDs only through the central registry in `src/legal_research_skill/rules.py`.
+- Keep reports deterministic; do not use timestamps or random IDs in validation output.
+- Do not add silent defaults when loading research-state JSON; reject unsupported fields through schema validation.
+- Keep tests and fixtures updated whenever schema paths, rule IDs, or validator behavior change.
+- Do not allow unsupported claims such as print-ready, submission-ready, DOCX generated, Word-compatible, all citations verified, or automated legal validation without the required evidence.
 
 ## Suggested Implementation Roadmap
 
@@ -75,6 +81,9 @@ Tests should cover:
 - Footnote minimum policy and fake-footnote prevention.
 - Colored and black-and-white profile structural equivalence.
 - Markdown rule references from `SKILL.md`.
+- JSON Schema validation for research state and validation reports.
+- Cross-reference, priority, approved-plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness validators.
+- CLI exit codes and deterministic reports.
 
 ## Failure Policy
 

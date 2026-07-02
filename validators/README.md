@@ -2,7 +2,11 @@
 
 This directory defines internal reviewer contracts for the Arabic Legal Research Production Skill.
 
-These files are documentation contracts only. They are not executable validators, automated checks, or test implementations in Phase 2.
+These files are reviewer contracts. They remain documentation contracts and are not replaced by code.
+
+Phase 3 adds executable text-level validators under `src/legal_research_skill/validators/`. Those modules implement schema, cross-reference, priority, plan, hierarchy, methodology, citation, footnote, bibliography, verification-marker, output-claim, and gate-readiness checks.
+
+The executable validators do not perform DOCX generation, Microsoft Word automation, internet source verification, legal correctness determination, or RTL rendering validation.
 
 ## Base Reviewer Contract
 
@@ -43,7 +47,7 @@ rerun_required: true
 limitations: []
 ```
 
-This is a documented output contract, not an executable schema.
+This remains the documented reviewer output contract. The executable validation report schema is `schemas/validation-report.schema.json`.
 
 ## Delivery Rule
 

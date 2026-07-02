@@ -1,36 +1,40 @@
 # Scripts
 
-This directory currently contains no executable scripts. It documents future implementation boundaries for generation and validation tooling.
+This directory contains no standalone scripts. Phase 3 implements validation tooling as an installable Python package and CLI under `src/legal_research_skill/`.
 
-## Future Implementation Areas
+## Implemented CLI
 
-- DOCX generator from structured research source.
-- Structure validator.
-- Methodology validator.
-- Citation validator.
-- Footnote validator.
-- Bibliography validator.
-- Formatting validator.
-- Profile comparison validator for colored and black-and-white outputs.
-- Final QA report generator.
+Run the executable validators with:
 
-## Future Generator Behavior
+```bash
+python -m legal_research_skill validate examples/fixtures/valid/minimal-valid.json
+legal-research-skill validate examples/fixtures/valid/minimal-valid.json
+legal-research-skill schema-check examples/fixtures/valid/minimal-valid.json
+legal-research-skill list-validators
+legal-research-skill explain PLAN-001
+```
 
-The DOCX generator should:
+Implemented `validate` options:
 
-- Read structured input.
-- Apply institution profile.
-- Apply selected style profile.
-- Generate Arabic RTL DOCX.
-- Insert cover, cover copy, dedication, acknowledgements, introduction, body, conclusion, references, appendices, and table of contents.
-- Apply heading styles.
-- Start each `مبحث` on a new page.
-- Insert real footnotes only.
-- Mark unverified sources as `Requires Verification`.
+- `--format json`
+- `--format text`
+- `--output PATH`
+- `--validator NAME`
+- `--exclude-validator NAME`
+- `--fail-on warning|low|medium|high|critical`
+- `--show-passed`
+- `--compact`
 
-## Future Executable Validator Behavior
+Exit codes:
 
-Future executable validators should fail clearly when:
+- `0`: validation completed and no finding reached the selected threshold.
+- `1`: validation completed and a finding reached the selected threshold.
+- `2`: usage, configuration, or input error.
+- `3`: unexpected internal execution error.
+
+## Implemented Validators
+
+The CLI runs executable validators for:
 
 - Required data is missing.
 - Approved plan headings are changed.
@@ -38,9 +42,9 @@ Future executable validators should fail clearly when:
 - Citations are missing or unverifiable.
 - Footnotes are fake, unrelated, or insufficient without explanation.
 - Bibliography metadata is incomplete.
-- RTL or print formatting is missing.
-- DOCX readiness cannot be confirmed.
+- Output claims exceed evidence.
+- State-machine gates are blocked or require reruns.
 
 ## DOCX Caveat
 
-Some Word features, including table of contents field updates and footnote numbering restart per page, may require Microsoft Word or compatible post-processing. Future scripts must report unvalidated behavior rather than claiming success.
+No DOCX generator, Word automation, or Word rendering validator exists in Phase 3. The CLI reports these as limitations rather than claiming print readiness.
