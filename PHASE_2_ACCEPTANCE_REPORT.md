@@ -320,11 +320,14 @@ Phase 3 entry gate: PASS.
 
 ## 12. Final Repository State
 
-Final state before commit:
+Closure verification after local commit `ad10195` (`docs: harden and verify phase 2 operating contracts`):
 
-- Modified tracked files included `README.md`, `SKILL.md`, `CODEX.md`, `checklists/final-review.md`, and `rules/police-academy-methodology.md`.
-- New files included Phase 1/2 rule, checklist, profile, validator, template, script, test, example, implementation, phase reports, terminology, and this acceptance report.
-- Untracked files existed before staging because Phase 1 and Phase 2 had not yet been committed.
-- `git diff --check`: PASS, with non-blocking CRLF conversion warnings from Git on Windows.
+- `git status --short`: clean.
+- `git diff --check`: PASS.
+- `git diff --cached --check`: PASS.
+- `git log -1 --oneline --decorate`: `ad10195 (HEAD -> main) docs: harden and verify phase 2 operating contracts`.
+- `git show --stat --oneline --summary HEAD`: 39 files changed, 3866 insertions.
+- `git diff HEAD --check`: PASS after the acceptance commit.
+- No unintended temporary files, untracked files, or unstaged changes remained after the acceptance commit.
 
-After commit, repository should have a clean working tree unless new user changes are added.
+This section was updated after that closure verification and is committed separately as the final procedural state record.
