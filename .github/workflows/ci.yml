@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package and dev tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install build
+
+      - name: Compile
+        run: python -m compileall src
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Tests
+        run: pytest
+
+      - name: Build wheel
+        run: python -m build --wheel --no-isolation
+
+      - name: Wheel content smoke
+        shell: python
+        run: |
+          from pathlib import Path
+          import zipfile
+
+          wheel = next(Path("dist").glob("arabic_legal_research_skill-*.whl"))
+          with zipfile.ZipFile(wheel) as zf:
+              names = set(zf.namelist())
+          required = {
+              "legal_research_skill/schemas/research-state.schema.json",
+              "legal_research_skill/schemas/validation-report.schema.json",
+              "legal_research_skill/schemas/artifact-manifest.schema.json",
+          }
+          missing = required - names
+          if missing:
+              raise SystemExit(f"Missing packaged schemas: {sorted(missing)}")
+
+      - name: Structural artifact smoke
+        run: >
+          python -m legal_research_skill build-artifact
+          examples/fixtures/valid/approved-plan-locked.json
+          --output-dir tests_tmp/ci-artifact
+          --format json

@@ -1,235 +1,273 @@
-# Arabic Legal Research Production Skill
+<p align="center">
+  <img src="assets/readme/hero.svg" alt="arabic-legal-research-skill by Ahmed Darhous" width="100%">
+</p>
 
-`arabic-legal-research-skill` is an open-source Claude Skill framework for producing Arabic legal academic research papers and preparing them for print-ready Microsoft Word delivery.
+<p align="center">
+  <a href="https://github.com/Darhous/arabic-legal-research-skill/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Darhous/arabic-legal-research-skill/ci.yml?branch=main&label=CI"></a>
+  <img alt="Python >=3.11" src="https://img.shields.io/badge/Python-%3E%3D3.11-2f6f9f">
+  <img alt="Tests 141 passed, 1 skipped" src="https://img.shields.io/badge/Tests-141%20passed%2C%201%20skipped-1f7a4d">
+  <img alt="Coverage 95.03 percent" src="https://img.shields.io/badge/Coverage-95.03%25-1f7a4d">
+  <img alt="Ruff enforced" src="https://img.shields.io/badge/Ruff-enforced-3f4554">
+  <img alt="Wheel smoke passed" src="https://img.shields.io/badge/Wheel%20smoke-passed-8f6b2e">
+</p>
 
-The repository is designed as a **Legal Research Production Operating System**, not a prompt-only writing aid. It defines staged execution, instruction priority, decision rules, task memory, internal reviewers, quality gates, and a final output contract.
+# arabic-legal-research-skill
 
-## What It Does
+منظومة Python وClaude Skill لإدارة تحقق بحث قانوني عربي منظم، مع توليد مسودة DOCX عربية RTL وفحصها بنيويًا كحزمة OOXML. المشروع يركز على قابلية التحقق، حدود الادعاء، وسلامة المسار التنفيذي بدل الاكتفاء بتعليمات نصية عامة.
 
-- Guides Claude through a strict legal research production workflow.
-- Audits user, university, course, professor, template, and methodology instructions before drafting.
-- Protects approved professor research plans from accidental modification.
-- Enforces Arabic legal academic methodology.
-- Enforces the body hierarchy `قسم → باب → فصل → مبحث → مطلب`.
-- Separates methodology, structure, language, citation, footnote, bibliography, formatting, and readiness rules.
-- Requires internal reviewers to pass before final delivery.
-- Treats unverified citations as `Requires Verification` instead of fabricating sources.
-- Provides Phase 3 JSON Schema validation for structured research state.
-- Provides Phase 3 executable text-level validators for schema integrity, cross references, priority decisions, approved plans, hierarchy, methodology, citations, footnotes, bibliography, verification markers, output claims, and gate readiness.
-- Provides a Python CLI that emits machine-readable JSON reports and human-readable summaries.
-- Generates deterministic Arabic RTL DOCX draft artifacts from validated research-state JSON.
-- Validates generated DOCX packages structurally as OPC/OOXML.
-- Optionally runs a Microsoft Word gate in an isolated worker process with a bounded timeout.
+## لماذا المشروع؟
 
-## What It Does Not Do
+إنتاج بحث قانوني عربي يحتاج أكثر من صياغة لغوية. يحتاج ترتيبًا منهجيًا، حماية للخطة المعتمدة، ضبطًا للمراجع والحواشي، ومخرجات يمكن اختبارها. هذا المستودع يحول تلك المتطلبات إلى schema، validators، CLI، وتقارير قابلة لإعادة التشغيل.
 
-- It does not permit fake citations, decorative footnotes, or invented references.
-- It does not rewrite approved professor plans unless the user explicitly requests that.
-- It does not treat generic profiles as stronger than uploaded university instructions.
-- It does not claim print readiness when DOCX formatting, footnotes, table of contents, or reviewer gates are unvalidated.
-- It does not automate source authenticity checks over the internet.
-- It does not determine legal correctness automatically.
-- It does not claim Microsoft Word validation unless the optional Word gate opens, updates, saves, reopens, and structurally validates the DOCX.
-- It does not claim print readiness or human legal acceptance in Phase 4.
+## القدرات المثبتة
 
-## Methodological Basis
+- تحقق JSON Schema لحالة البحث.
+- Phase 3 validation gate عبر validators تنفيذية.
+- حماية عناوين الخطة المعتمدة وترتيبها.
+- فحص الاقتباسات والحواشي والببليوغرافيا وحدود التحقق.
+- توليد DOCX عربي RTL من fixture صالح.
+- فحص DOCX بنيويًا: parts، relationships، XML، styles، RTL، fields، footnotes، page setup، وموانع المحتوى الخارجي.
+- manifest يحتوي hashes وحالة artifact.
+- Word worker اختياري مع مهلة زمنية وتنظيف محدود بالملكية المثبتة.
+- wheel build وinstalled-wheel smoke من خارج root المستودع.
 
-The first version encodes rules derived from:
+## الحدود
 
-**"الوجيز في مناهج البحث العلمي للدراسات القانونية والأمنية"**
-Prepared by Dr. Ibrahim El-Shereai, Police Academy, 2024.
+لا يثبت المشروع صحة الرأي القانوني، ولا يتحقق من أصالة المصادر عبر الإنترنت، ولا يقدم مراجعة بشرية، ولا يقرر صلاحية الإيداع أو الطباعة النهائية. عند تعذر التحقق من مصدر أو سلوك Word، يظل ذلك قيدًا مصرحًا به في التقرير.
 
-The guide defines scientific research as organized research efforts by a researcher to study a research problem using a scientific method, reaching results and recommendations under academic supervision.
+## Architecture
 
-The repository treats good legal academic research as depending on three connected dimensions:
-
-- الموضوع
-- الشكل
-- المنهج
-
-## Repository Layout
-
-```text
-.
-├── SKILL.md
-├── CODEX.md
-├── IMPLEMENTATION_REPORT.md
-├── PHASE_2_REPORT.md
-├── PHASE_3_IMPLEMENTATION_REPORT.md
-├── pyproject.toml
-├── schemas/
-│   ├── research-state.schema.json
-│   ├── validation-report.schema.json
-│   └── README.md
-├── src/
-│   └── legal_research_skill/
-├── rules/
-│   ├── decision-engine.md
-│   ├── priority-hierarchy.md
-│   ├── output-contract.md
-│   ├── error-recovery.md
-│   ├── task-memory.md
-│   ├── terminology.md
-│   ├── police-academy-methodology.md
-│   ├── structure.md
-│   ├── language.md
-│   ├── citations.md
-│   ├── footnotes.md
-│   ├── formatting.md
-│   └── bibliography.md
-├── validators/
-│   ├── README.md
-│   ├── plan-reviewer.md
-│   ├── methodology-reviewer.md
-│   ├── language-reviewer.md
-│   ├── citation-reviewer.md
-│   ├── footnote-reviewer.md
-│   ├── bibliography-reviewer.md
-│   ├── formatting-reviewer.md
-│   ├── docx-readiness-reviewer.md
-│   └── final-qa-reviewer.md
-├── checklists/
-│   ├── final-review.md
-│   ├── methodology-review.md
-│   ├── citation-review.md
-│   └── formatting-review.md
-├── profiles/
-│   ├── police-academy/profile.md
-│   └── generic-arabic-university/profile.md
-├── templates/
-│   └── README.md
-├── scripts/
-│   └── README.md
-├── tests/
-│   ├── README.md
-│   ├── integration/
-│   ├── regression/
-│   └── unit/
-└── examples/
-    ├── README.md
-    └── fixtures/
+```mermaid
+flowchart LR
+  A[Research State JSON] --> B[Schema Validation]
+  B --> C[Phase 3 Gate]
+  C --> D[DOCX Renderer]
+  D --> E[Structural Validator]
+  E --> F{Optional Word Gate}
+  F -->|not requested| G[Artifact Manifest]
+  F -->|required and blocked| H[Blocked Manifest]
+  F -->|completed| G
 ```
 
-## Operating Model
+## Workflow
 
-The Skill runs through strict phases:
+1. اقرأ research-state JSON.
+2. تحقق من schema.
+3. شغل validators الخاصة بالمنهجية، الخطة، الإحالات، الحواشي، والمطالبات.
+4. ولّد DOCX بنيويًا.
+5. افحص DOCX كحزمة OOXML.
+6. شغل Word gate عند الطلب فقط.
+7. اكتب artifact manifest.
 
-1. Intake
-2. Source and instruction audit
-3. Priority resolution
-4. Approved plan validation
-5. Research design
-6. Methodological introduction drafting
-7. Body drafting
-8. Citation and footnote integration
-9. Bibliography building
-10. DOCX formatting preparation
-11. Internal review
-12. Final QA
-13. Delivery
+## المتطلبات
 
-No phase may start until the previous phase passes. Missing information, unresolved contradictions, insufficient sources, or failed review gates stop the workflow.
+- Python `>=3.11`.
+- dependency runtime: `jsonschema>=4.22`.
+- Windows وMicrosoft Word وpywin32 مطلوبة فقط عند تشغيل Word gate الحقيقي.
+- الاختبارات العادية وCI لا تشغل Word الحقيقي.
 
-## Priority System
+## التثبيت
 
-The canonical priority order is defined only in `rules/priority-hierarchy.md`. Other files must reference that rule instead of redefining a competing order.
-
-## Required Research Order
-
-Generated research documents must follow this order unless the user provides an explicit institution rule that overrides it:
-
-1. Cover
-2. Cover copy
-3. Quran verse, Hadith, or quotation page
-4. Dedication
-5. Acknowledgements
-6. Methodological introduction
-7. Research body
-8. Conclusion: summary, results, recommendations
-9. References list
-10. Appendices if any
-11. Table of contents
-
-## Body Hierarchy
-
-Use only this hierarchy for the research body unless the user explicitly asks otherwise:
-
-```text
-قسم → باب → فصل → مبحث → مطلب
-```
-
-Do not use `فرع`, `بند`, `أولًا/ثانيًا`, numbers, letters, or symbols unless the user explicitly requests them.
-
-## Core Failure Rules
-
-The Skill must not claim success unless validation checks pass.
-
-- If required research data is missing, ask the user.
-- If the user supplies an approved research plan, treat it as mandatory.
-- Do not change, reorder, delete, or rename approved plan headings unless the user explicitly requests it.
-- Do not invent citations, footnotes, references, Hadith sources, Quran references, URLs, or access dates.
-- If a source cannot be verified, mark it as `Requires Verification`.
-- If DOCX footnote behavior cannot be validated in Word, mark the issue clearly in the final report.
-
-## Internal Review System
-
-The `validators/` folder defines reviewer roles for:
-
-- Approved plan compliance.
-- Methodology compliance.
-- Academic language.
-- Citation integrity.
-- Footnote integrity.
-- Bibliography completeness.
-- Formatting readiness.
-- DOCX readiness.
-- Final QA.
-
-The Skill must not deliver final work unless all required reviewers pass.
-
-## Output Profiles
-
-The repository defines two output style profiles:
-
-- Colored print version.
-- Black-and-white print version.
-
-Both preserve the same academic structure and differ only in visual styling.
-
-## Current Status
-
-Phase 4 adds a DOCX artifact pipeline. It includes deterministic DOCX generation, structural OOXML validation, artifact manifests, and an optional Microsoft Word finalization gate.
-
-Structural validation means the package, XML parts, relationships, styles, RTL properties, fields, page setup, and footnote links pass automated checks. Word validation is narrower and explicit: Microsoft Word must open the generated DOCX, update fields and TOC, repaginate, save, reopen, and then pass structural validation again.
-
-The Word gate is optional by default. Use `--require-word` to make it mandatory for `build-artifact`. The default Word timeout is 60 seconds, and the implementation runs Word automation in a worker process so the CLI cannot hang indefinitely. The tool does not kill general user Word sessions.
-
-Example commands:
+من المصدر المحلي:
 
 ```bash
-python -m legal_research_skill render-docx examples/fixtures/valid/approved-plan-locked.json --output tests_tmp/sample.docx
-python -m legal_research_skill validate-docx tests_tmp/sample.docx --format json
-python -m legal_research_skill finalize-word tests_tmp/sample.docx --output tests_tmp/sample.word.docx --word-timeout-seconds 60 --format json
-python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase4-artifact
-python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase4-artifact-word --require-word --word-timeout-seconds 60
+python -m pip install .
 ```
 
-## Roadmap
+للتطوير:
 
-- Phase 5: legal content expansion and review workflows that build on the Phase 4 artifact pipeline.
-- Later phase: add template assets and release documentation.
-- Later phase: perform the professional GitHub README visual redesign.
+```bash
+python -m pip install -e ".[dev]"
+```
 
-## Safety and Academic Integrity Notice
+من wheel محلية بعد البناء:
 
-This repository is built for academic assistance and document production. It must preserve academic honesty. Users remain responsible for institutional compliance, source verification, and final submission decisions.
+```bash
+python -m pip wheel . --no-deps --no-build-isolation --wheel-dir dist
+python -m pip install dist/arabic_legal_research_skill-0.3.0-py3-none-any.whl
+```
 
-The Skill must never fabricate authorities, cases, laws, books, articles, Hadith references, Quran references, URLs, access dates, or page numbers.
+لا توجد مطالبة بنشر PyPI حاليًا.
 
-## Limitations
+## Quick Start
 
-- Current executable validation covers research-state structure, DOCX package structure, and bounded Word automation behavior.
-- Microsoft Word validation requires Windows, Microsoft Word, and pywin32.
-- CI and ordinary tests do not require Microsoft Word.
-- `WORD_VALIDATED` does not mean human legal review, source authenticity verification, or print-ready acceptance.
-- `print-ready` remains prohibited unless the current policy's structural, Word, and visual/human review gates are all satisfied.
+```bash
+legal-research-skill schema-check examples/fixtures/valid/minimal-valid.json --format json
+legal-research-skill validate examples/fixtures/valid/approved-plan-locked.json --format json
+legal-research-skill render-docx examples/fixtures/valid/approved-plan-locked.json --output out/draft.docx --format json
+legal-research-skill validate-docx out/draft.docx --format json
+legal-research-skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir out/artifact --format json
+```
+
+## أمثلة CLI
+
+عرض validators:
+
+```bash
+legal-research-skill list-validators
+```
+
+شرح قاعدة محلية:
+
+```bash
+legal-research-skill explain CLAIM-001
+```
+
+فحص fixture غير صالح:
+
+```bash
+legal-research-skill validate examples/fixtures/invalid/unsupported-output-claim.json --format json
+```
+
+## DOCX Generation
+
+أمر `render-docx` ينتج ملف DOCX ويفحصه بنيويًا مباشرة:
+
+```bash
+legal-research-skill render-docx examples/fixtures/valid/approved-plan-locked.json --output out/research.docx --format json
+```
+
+النتيجة الصالحة تعني أن الحزمة البنيوية سليمة وفق فاحص المشروع، ولا تعني مراجعة Word أو مراجعة بشرية.
+
+## Structural Validation
+
+```bash
+legal-research-skill validate-docx out/research.docx --format json
+```
+
+الفاحص يرفض العلاقات الخارجية، المسارات غير الآمنة داخل ZIP، أجزاء تنفيذية أو ماكرو، XML غير صالح، وغياب الأجزاء المطلوبة.
+
+## Microsoft Word Gate
+
+Word gate اختياري:
+
+```bash
+legal-research-skill finalize-word out/research.docx --output out/research-word.docx --word-timeout-seconds 60 --format json
+```
+
+وعند جعله إلزاميًا داخل artifact build:
+
+```bash
+legal-research-skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir out/artifact-word --require-word --word-timeout-seconds 60 --format json
+```
+
+في بيئة Phase 6 الحالية، pywin32 وWord COM مسجلان، لكن `DispatchEx("Word.Application")` يتوقف حتى انتهاء المهلة. المسار يعود بـ`TIMEOUT`، ينهي worker فقط، ولا يقتل جلسات Word غير مثبتة الملكية، ولا ينتج ملف Word نهائيًا.
+
+## Artifact Manifest
+
+`build-artifact` يكتب:
+
+- DOCX قبل Word gate.
+- `artifact-manifest.json`.
+- hashes للمدخلات والمخرجات.
+- claims مسموحة وممنوعة.
+- limitations صريحة.
+- Word evidence عند تشغيل gate.
+
+## Result States وExit Codes
+
+الحالات العملية:
+
+- `STRUCTURALLY_VALID`: DOCX البنيوي صالح.
+- `BLOCKED`: بوابة مطلوبة لم تمر.
+- `TIMEOUT`: Word worker تجاوز المهلة.
+- `FAILED`: فشل تنفيذي أو بنيوي.
+- `NOT_RUN`: Word gate غير مطلوب.
+- `NOT_AVAILABLE`: Word أو pywin32 غير متاحين.
+
+Exit codes:
+
+- `0`: نجاح العملية المطلوبة.
+- `1`: فشل تحقق أو artifact.
+- `2`: خطأ إدخال أو وسيطات.
+- `3`: Word gate إلزامي ومحجوب أو غير متاح.
+- `4`: فشل Word غير متوقع بعد طلب gate.
+
+## مثال مخرجات مختصر
+
+```json
+{
+  "final_artifact_status": "STRUCTURALLY_VALID",
+  "allowed_claims": ["DOCX generated", "DOCX structurally validated", "RTL structurally applied"],
+  "word_evidence": {"status": "NOT_RUN", "availability": "not_checked"}
+}
+```
+
+## بنية المستودع
+
+```text
+src/legal_research_skill/     Python package and CLI
+schemas/                      Canonical JSON schemas
+rules/                        Legal research operating rules
+validators/                   Reviewer contracts
+examples/fixtures/            Valid and invalid research-state fixtures
+tests/                        Unit, integration, acceptance, regression tests
+reports/                      Machine-readable and phase reports
+assets/readme/                GitHub presentation assets
+.github/workflows/            CI configuration
+```
+
+## الاختبارات والجودة
+
+الأوامر الرسمية:
+
+```bash
+python -m compileall src
+ruff format --check .
+ruff check .
+pytest
+```
+
+Phase 6 result: `141 passed, 1 skipped`, coverage `95.03%`. حد القبول في `pyproject.toml` هو `95%`.
+
+## الأمان
+
+- لا يستخدم `eval` أو `exec`.
+- لا يستخدم shell command composition داخل Python runner.
+- لا ينفذ ماكرو داخل DOCX.
+- لا يسمح بعلاقات DOCX خارجية.
+- لا يقتل عمليات Word العامة.
+- لا يكتب أسرارًا في fixtures أو reports.
+
+## Reproducibility
+
+المخرجات البنيوية تعتمد على fixture ثابتة، schema ثابت، وrenderer deterministic. Word output ليس جزءًا من ضمان التكرارية ما دام COM dispatch محجوبًا في هذه البيئة.
+
+## القيود البيئية
+
+- Word gate الحقيقي يتطلب جلسة Windows/Office قابلة للأتمتة.
+- في Phase 6، آخر checkpoint مؤكد: `dispatch_started`.
+- ownership لعملية Word لم يثبت لأن `app.Hwnd` لم يعد قبل المهلة.
+- installed-wheel smoke استخدم dependency محلية مثبتة للنظام لـ`jsonschema` دون تنزيل من الشبكة.
+
+## المساهمة
+
+راجع [CONTRIBUTING.md](CONTRIBUTING.md). أي تغيير يجب أن يحافظ على حدود الادعاء، حد coverage، وسلامة DOCX/Word.
+
+## Security Reporting
+
+راجع [SECURITY.md](SECURITY.md). للإبلاغ الخاص: `ahmeddarhous@gmail.com`.
+
+## License Status
+
+لم يتم تحديد رخصة نشر في هذا المستودع حتى الآن. لا يوجد ملف `LICENSE`، ولا يضيف هذا الإصدار رخصة نيابة عن صاحب المشروع.
+
+## المؤلف
+
+Ahmed Darhous
+
+<p align="center">
+  <a href="https://www.instagram.com/darhous/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>
+  ·
+  <a href="https://www.linkedin.com/in/darhous/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+  ·
+  <a href="https://www.facebook.com/ahmed.darhous" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Facebook</a>
+  ·
+  <a href="https://wa.me/201030002331" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">WhatsApp</a>
+  ·
+  <a href="https://github.com/darhous" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+</p>
+
+<p align="center">
+  Designed &amp; Developed by <a href="mailto:ahmeddarhous@gmail.com">Ahmed Darhous</a>
+</p>
