@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0.0",
+  "generated_for": "phase_5_combined_acceptance",
+  "allowed_statuses": ["pass", "fail", "blocked", "not_applicable"],
+  "gates": [
+    {
+      "gate": "input",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Valid and invalid research-state fixtures exercised through public CLI tests."],
+      "commands": ["pytest tests/acceptance/test_phase5_acceptance.py"],
+      "limitations": []
+    },
+    {
+      "gate": "schema_validation",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Malformed, missing, unsupported version, invalid enum, and identifier variants are rejected."],
+      "commands": ["python -m legal_research_skill schema-check examples/fixtures/valid/minimal-valid.json"],
+      "limitations": []
+    },
+    {
+      "gate": "state_machine",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Unsupported workflow state is rejected by schema_integrity as unsupported_workflow_state."],
+      "commands": ["pytest tests/acceptance/test_phase5_acceptance.py"],
+      "limitations": []
+    },
+    {
+      "gate": "decision_engine",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Phase 3 pipeline decisions remain exercised across valid and invalid fixtures."],
+      "commands": ["pytest tests/acceptance/test_phase3_adversarial.py tests/integration/test_manifest_pipeline.py"],
+      "limitations": []
+    },
+    {
+      "gate": "phase_3_validation",
+      "status": "pass",
+      "required": true,
+      "evidence": ["All Phase 3 validators run before DOCX rendering in build-artifact."],
+      "commands": ["python -m legal_research_skill validate examples/fixtures/valid/approved-plan-locked.json --format json"],
+      "limitations": []
+    },
+    {
+      "gate": "docx_rendering",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Arabic RTL, mixed Unicode, long heading, and multiple-footnote cases render structurally valid DOCX."],
+      "commands": ["python -m legal_research_skill render-docx examples/fixtures/valid/approved-plan-locked.json --output tests_tmp/phase5-word-diagnostic/task-approved-plan-locked.docx --format json"],
+      "limitations": ["Renderer does not claim Microsoft Word field update."]
+    },
+    {
+      "gate": "docx_structural_validation",
+      "status": "pass",
+      "required": true,
+      "evidence": ["DOCX validator rejects unsafe packages and accepts generated artifacts."],
+      "commands": ["python -m legal_research_skill validate-docx tests_tmp/phase5-word-diagnostic/task-approved-plan-locked.docx --format json"],
+      "limitations": ["Structural validation is not visual review and not Word acceptance."]
+    },
+    {
+      "gate": "optional_word_gate",
+      "status": "blocked",
+      "required": false,
+      "evidence": [
+        "Real 60-second Word smoke returned TIMEOUT.",
+        "Last checkpoint was dispatch_started.",
+        "Word PID was null because DispatchEx did not return; ownership was not verified.",
+        "Worker cleanup was worker_terminated and no final output was present."
+      ],
+      "commands": ["python -m legal_research_skill finalize-word <generated.docx> --output tests_tmp/phase5-word-diagnostic/word-finalized.docx --word-timeout-seconds 60 --format json"],
+      "limitations": ["WORD_VALIDATED is prohibited unless Word opens, updates, saves, closes, reopens, closes, and post-validates."]
+    },
+    {
+      "gate": "artifact_manifest",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Manifest schema validates and hashes match generated files."],
+      "commands": ["python -m legal_research_skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir tests_tmp/phase5-e2e --format json"],
+      "limitations": []
+    },
+    {
+      "gate": "cli_serialization",
+      "status": "pass",
+      "required": true,
+      "evidence": ["JSON, compact JSON, text output, invalid JSON, unknown args, and timeout bounds are tested."],
+      "commands": ["pytest tests/acceptance/test_phase5_acceptance.py tests/unit/test_cli.py"],
+      "limitations": []
+    },
+    {
+      "gate": "exit_codes",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Success, validation failure, input error, and Word gate codes are exercised."],
+      "commands": ["pytest tests/integration/test_artifact_cli.py tests/acceptance/test_phase5_acceptance.py"],
+      "limitations": []
+    },
+    {
+      "gate": "filesystem_safety",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Traversal, absolute output escape, reserved names, collision, partial failure, copy failure, and atomic replace failure are tested."],
+      "commands": ["pytest tests/acceptance/test_phase5_acceptance.py tests/unit/test_word_automation.py"],
+      "limitations": ["Symlink escape is skipped only when OS privileges do not allow symlink creation."]
+    },
+    {
+      "gate": "reproducibility",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Separate builds produce identical renderer DOCX SHA-256 and stable manifest semantics after expected path normalization."],
+      "commands": ["pytest tests/acceptance/test_phase5_acceptance.py"],
+      "limitations": ["Word-generated output is not claimed byte-deterministic."]
+    },
+    {
+      "gate": "packaging",
+      "status": "blocked",
+      "required": true,
+      "evidence": [
+        "python -m build failed because module build is not installed.",
+        "Direct setuptools.build_meta build failed because setuptools is not installed in the active Python environment.",
+        "pip wheel/install local attempts failed with Windows permission errors in temporary build directories."
+      ],
+      "commands": [
+        "python -m build",
+        "python -m pip wheel . --no-deps --no-build-isolation -w tests_tmp/phase5-dist",
+        "python -m pip install . --no-deps --no-build-isolation --target tests_tmp/phase5-install"
+      ],
+      "limitations": ["No dependency installation from the internet was performed, so package smoke remains environment-blocked."]
+    },
+    {
+      "gate": "documentation_contracts",
+      "status": "pass",
+      "required": true,
+      "evidence": ["Technical docs describe structural vs Word validation, timeout, exit codes, claims, and cleanup boundaries."],
+      "commands": ["Manual review"],
+      "limitations": ["Public README visual polish is deferred to Phase 6."]
+    }
+  ]
+}

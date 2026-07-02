@@ -25,6 +25,9 @@ legal-research-skill = "legal_research_skill.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+legal_research_skill = ["schemas/*.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers --strict-config -p no:cacheprovider --cov=legal_research_skill --cov-branch --cov-report=term-missing --cov-fail-under=95"

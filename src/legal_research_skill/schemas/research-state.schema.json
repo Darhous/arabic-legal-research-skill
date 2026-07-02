@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arabic-legal-research-skill:research-state:0.3.0",
+  "title": "Arabic Legal Research State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_identifier",
+    "user_request",
+    "research_metadata",
+    "instruction_context",
+    "jurisdiction",
+    "institution_profile",
+    "language",
+    "research_type",
+    "source_restrictions",
+    "approved_plan",
+    "body_hierarchy",
+    "methodology",
+    "sources",
+    "citations",
+    "footnotes",
+    "bibliography",
+    "formatting_profile",
+    "assumptions",
+    "unresolved_questions",
+    "verification_markers",
+    "state_machine",
+    "reviewer_results",
+    "validation_history",
+    "output_claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.3.0" },
+    "task_identifier": { "$ref": "#/$defs/id" },
+    "user_request": { "$ref": "#/$defs/non_empty_text" },
+    "research_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["research_title", "required_output_type", "page_count_target"],
+      "properties": {
+        "research_title": { "$ref": "#/$defs/status_text" },
+        "researcher_name": { "$ref": "#/$defs/status_text" },
+        "supervisor_name": { "$ref": "#/$defs/status_text" },
+        "required_output_type": { "enum": ["docx_ready_source", "review_report", "docx_requested", "other"] },
+        "page_count_target": { "$ref": "#/$defs/status_text" }
+      }
+    },
+    "instruction_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["priority_decisions", "unresolved_conflicts"],
+      "properties": {
+        "priority_decisions": { "type": "array", "items": { "$ref": "#/$defs/priority_decision" } },
+        "unresolved_conflicts": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } }
+      }
+    },
+    "jurisdiction": { "$ref": "#/$defs/status_text" },
+    "institution_profile": { "enum": ["police-academy", "generic-arabic-university", "custom", "not_specified"] },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "direction"],
+      "properties": {
+        "primary": { "enum": ["Arabic", "English", "mixed"] },
+        "direction": { "enum": ["RTL", "LTR", "mixed"] }
+      }
+    },
+    "research_type": { "enum": ["legal_academic_paper", "plan", "review", "introduction", "other"] },
+    "source_restrictions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "exclusive_source_ids", "mandatory_missing_files"],
+      "properties": {
+        "mode": { "enum": ["none", "uploaded_only", "official_sources_first", "open_web_disallowed"] },
+        "exclusive_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "mandatory_missing_files": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } }
+      }
+    },
+    "approved_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "source", "nodes"],
+      "properties": {
+        "status": {
+          "enum": ["none", "proposed", "approved", "locked_approved", "incomplete_approved", "confirmed_missing"]
+        },
+        "source": { "$ref": "#/$defs/status_text" },
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/plan_node" } }
+      }
+    },
+    "body_hierarchy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes"],
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/body_heading" } }
+      }
+    },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "components", "conclusion"],
+      "properties": {
+        "profile": { "enum": ["police-academy", "generic-arabic-university", "custom"] },
+        "components": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/methodology_component" }
+        },
+        "conclusion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary", "findings", "recommendations"],
+          "properties": {
+            "summary": { "$ref": "#/$defs/methodology_component" },
+            "findings": { "$ref": "#/$defs/methodology_component" },
+            "recommendations": { "$ref": "#/$defs/methodology_component" }
+          }
+        }
+      }
+    },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } },
+    "footnotes": { "type": "array", "items": { "$ref": "#/$defs/footnote" } },
+    "bibliography": { "type": "array", "items": { "$ref": "#/$defs/bibliography_entry" } },
+    "formatting_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style", "official_template_status", "rtl_validated", "docx_artifact"],
+      "properties": {
+        "style": { "enum": ["colored_print", "black_and_white_print", "official_template", "not_applicable"] },
+        "official_template_status": { "enum": ["not_required", "provided", "missing_required", "not_applicable"] },
+        "rtl_validated": { "type": "boolean" },
+        "docx_artifact": { "type": ["string", "null"] }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+    "unresolved_questions": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+    "verification_markers": { "type": "array", "items": { "$ref": "#/$defs/verification_marker" } },
+    "state_machine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current_state", "gates", "next_allowed_state", "rerun_required"],
+      "properties": {
+        "current_state": { "$ref": "#/$defs/non_empty_text" },
+        "gates": { "type": "array", "items": { "$ref": "#/$defs/gate" } },
+        "next_allowed_state": { "type": ["string", "null"] },
+        "rerun_required": { "type": "boolean" }
+      }
+    },
+    "reviewer_results": { "type": "array", "items": { "$ref": "#/$defs/reviewer_result" } },
+    "validation_history": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+    "output_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "allowed", "prohibited", "evidence"],
+      "properties": {
+        "requested": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+        "allowed": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+        "prohibited": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "docx_generated",
+            "docx_structurally_validated",
+            "word_manually_validated",
+            "all_reviewers_passed",
+            "all_sources_verified",
+            "submission_requirements_confirmed",
+            "automated_legal_correctness_validated"
+          ],
+          "properties": {
+            "docx_generated": { "type": "boolean" },
+            "docx_structurally_validated": { "type": "boolean" },
+            "word_manually_validated": { "type": "boolean" },
+            "all_reviewers_passed": { "type": "boolean" },
+            "all_sources_verified": { "type": "boolean" },
+            "submission_requirements_confirmed": { "type": "boolean" },
+            "automated_legal_correctness_validated": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+    "non_empty_text": { "type": "string", "minLength": 1 },
+    "status_text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value"],
+      "properties": {
+        "status": {
+          "enum": ["Known", "Missing", "Pending User", "Derived", "Assumed", "Requires Verification", "Passed", "Failed", "Not Applicable"]
+        },
+        "value": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "verification_status": { "enum": ["verified", "requires_verification", "unverifiable", "not_applicable"] },
+    "priority_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conflict_id",
+        "conflict_type",
+        "selected_authority_level",
+        "rejected_authority_level",
+        "specificity_recorded",
+        "recency_recorded",
+        "resolution_reason",
+        "task_memory_update"
+      ],
+      "properties": {
+        "conflict_id": { "$ref": "#/$defs/id" },
+        "conflict_type": { "enum": ["user_vs_profile", "approved_plan_vs_proposed", "template_vs_default", "primary_vs_secondary_source", "same_authority", "other"] },
+        "selected_authority_level": { "$ref": "#/$defs/non_empty_text" },
+        "rejected_authority_level": { "$ref": "#/$defs/non_empty_text" },
+        "specificity_recorded": { "type": "boolean" },
+        "recency_recorded": { "type": "boolean" },
+        "resolution_reason": { "$ref": "#/$defs/non_empty_text" },
+        "task_memory_update": { "type": "boolean" },
+        "explicit_user_authorization": { "type": "boolean" }
+      }
+    },
+    "plan_node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plan_node_id", "parent_plan_node_id", "node_type", "display_label", "title", "order", "locked", "omitted", "omission_reason"],
+      "properties": {
+        "plan_node_id": { "$ref": "#/$defs/id" },
+        "parent_plan_node_id": { "type": ["string", "null"], "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+        "node_type": { "enum": ["part", "chapter", "section", "subsection", "demand"] },
+        "display_label": { "$ref": "#/$defs/non_empty_text" },
+        "title": { "$ref": "#/$defs/non_empty_text" },
+        "order": { "type": "integer", "minimum": 1 },
+        "locked": { "type": "boolean" },
+        "omitted": { "type": "boolean" },
+        "omission_reason": { "type": ["string", "null"] }
+      }
+    },
+    "body_heading": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading_id", "parent_heading_id", "plan_node_id", "level_type", "display_label", "title", "order"],
+      "properties": {
+        "heading_id": { "$ref": "#/$defs/id" },
+        "parent_heading_id": { "type": ["string", "null"], "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+        "plan_node_id": { "type": ["string", "null"], "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+        "level_type": { "enum": ["part", "chapter", "section", "subsection", "demand", "unsupported"] },
+        "display_label": { "$ref": "#/$defs/non_empty_text" },
+        "title": { "$ref": "#/$defs/non_empty_text" },
+        "order": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "methodology_component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "content"],
+      "properties": {
+        "status": { "enum": ["present", "missing", "empty", "placeholder", "not_applicable"] },
+        "content": { "type": ["string", "null"] },
+        "justification": { "type": "string" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "title",
+        "source_type",
+        "authority_level",
+        "authors",
+        "institution",
+        "jurisdiction",
+        "publication_date",
+        "url_or_location",
+        "uploaded_file",
+        "exclusive_use",
+        "verification_status",
+        "verification_notes",
+        "bibliographic_data",
+        "used_in_research",
+        "include_in_bibliography"
+      ],
+      "properties": {
+        "source_id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/non_empty_text" },
+        "source_type": { "enum": ["law", "court_judgment", "book", "journal_article", "thesis", "website", "official_document", "uploaded_file", "other"] },
+        "authority_level": { "enum": ["primary_legal", "official", "academic", "secondary", "unknown"] },
+        "authors": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+        "institution": { "type": ["string", "null"] },
+        "jurisdiction": { "type": ["string", "null"] },
+        "publication_date": { "type": ["string", "null"] },
+        "url_or_location": { "type": ["string", "null"] },
+        "uploaded_file": { "type": ["string", "null"] },
+        "exclusive_use": { "type": "boolean" },
+        "verification_status": { "$ref": "#/$defs/verification_status" },
+        "verification_notes": { "type": ["string", "null"] },
+        "bibliographic_data": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+        "used_in_research": { "type": "boolean" },
+        "include_in_bibliography": { "type": "boolean" }
+      }
+    },
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["citation_id", "source_id", "claim_id", "usage_type", "direct_quote", "quote_marks_present", "location", "verification_status", "marker_id", "footnote_required"],
+      "properties": {
+        "citation_id": { "$ref": "#/$defs/id" },
+        "source_id": { "$ref": "#/$defs/id" },
+        "claim_id": { "$ref": "#/$defs/id" },
+        "usage_type": { "enum": ["direct_quote", "indirect_quote", "support", "background", "sacred_text", "famous_quote"] },
+        "direct_quote": { "type": "boolean" },
+        "quote_marks_present": { "type": "boolean" },
+        "location": { "type": ["string", "null"] },
+        "verification_status": { "$ref": "#/$defs/verification_status" },
+        "marker_id": { "type": ["string", "null"], "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+        "footnote_required": { "type": "boolean" }
+      }
+    },
+    "footnote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["footnote_id", "citation_ids", "content", "purpose_reason", "placement_reference", "numbering_intent", "verification_status"],
+      "properties": {
+        "footnote_id": { "$ref": "#/$defs/id" },
+        "citation_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "content": { "$ref": "#/$defs/non_empty_text" },
+        "purpose_reason": { "type": ["string", "null"] },
+        "placement_reference": { "$ref": "#/$defs/non_empty_text" },
+        "numbering_intent": { "enum": ["sequential", "per_page_restart", "not_applicable"] },
+        "verification_status": { "$ref": "#/$defs/verification_status" }
+      }
+    },
+    "bibliography_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bibliography_id", "source_ids", "entry_text", "used_source", "authorized_unused", "authorization_reason", "verification_status"],
+      "properties": {
+        "bibliography_id": { "$ref": "#/$defs/id" },
+        "source_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+        "entry_text": { "$ref": "#/$defs/non_empty_text" },
+        "used_source": { "type": "boolean" },
+        "authorized_unused": { "type": "boolean" },
+        "authorization_reason": { "type": ["string", "null"] },
+        "verification_status": { "$ref": "#/$defs/verification_status" }
+      }
+    },
+    "verification_marker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marker_id", "marker_text", "target_type", "target_id", "reason", "created_by", "removal_authority", "status", "resolution_evidence", "arabic_disclosure"],
+      "properties": {
+        "marker_id": { "$ref": "#/$defs/id" },
+        "marker_text": { "$ref": "#/$defs/non_empty_text" },
+        "target_type": { "enum": ["source", "citation", "footnote", "bibliography"] },
+        "target_id": { "$ref": "#/$defs/id" },
+        "reason": { "$ref": "#/$defs/non_empty_text" },
+        "created_by": { "$ref": "#/$defs/non_empty_text" },
+        "removal_authority": { "$ref": "#/$defs/non_empty_text" },
+        "status": { "enum": ["open", "resolved", "not_applicable"] },
+        "resolution_evidence": { "type": ["string", "null"] },
+        "arabic_disclosure": { "type": ["string", "null"] }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "status", "decision", "required_validators", "blockers"],
+      "properties": {
+        "gate_id": { "$ref": "#/$defs/id" },
+        "status": { "enum": ["not_run", "pass", "fail", "blocked", "not_applicable"] },
+        "decision": { "enum": ["PROCEED", "REVISE", "PAUSE", "FAIL"] },
+        "required_validators": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } },
+        "blockers": { "type": "array", "items": { "$ref": "#/$defs/non_empty_text" } }
+      }
+    },
+    "reviewer_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_result_id", "reviewer", "status", "decision", "affected_entity_type", "affected_entity_id"],
+      "properties": {
+        "review_result_id": { "$ref": "#/$defs/id" },
+        "reviewer": { "$ref": "#/$defs/non_empty_text" },
+        "status": { "enum": ["PASS", "FAIL", "WARNING", "SKIPPED"] },
+        "decision": { "enum": ["PROCEED", "REVISE", "PAUSE", "FAIL"] },
+        "affected_entity_type": { "enum": ["source", "citation", "footnote", "bibliography", "heading", "plan_node", "none"] },
+        "affected_entity_id": { "type": ["string", "null"], "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" }
+      }
+    }
+  }
+}

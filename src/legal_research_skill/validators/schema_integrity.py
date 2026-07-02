@@ -25,6 +25,13 @@ class SchemaIntegrityValidator(BaseValidator):
         ("approved_plan", "nodes", "plan_node_id"),
         ("body_hierarchy", "nodes", "heading_id"),
     )
+    ALLOWED_WORKFLOW_STATES = {
+        "Planning",
+        "Drafting",
+        "Validation",
+        "Final QA",
+        "Delivery",
+    }
 
     def validate(self, state: ResearchState, raw_data: dict[str, Any] | None = None) -> ValidatorResult:
         data = raw_data if raw_data is not None else state.data
@@ -47,6 +54,17 @@ class SchemaIntegrityValidator(BaseValidator):
         for object_key, list_key, id_key in self.NESTED_ID_FIELDS:
             ids = [str(item.get(id_key, "")) for item in data.get(object_key, {}).get(list_key, [])]
             findings.extend(self._duplicate_findings(ids, id_key, f"/{object_key}/{list_key}"))
+        current_state = data.get("state_machine", {}).get("current_state")
+        if current_state not in self.ALLOWED_WORKFLOW_STATES:
+            findings.append(
+                self.finding(
+                    "SCHEMA-002",
+                    f"Unsupported workflow state: {current_state}",
+                    path="/state_machine/current_state",
+                    related_ids=(str(current_state),),
+                    code="unsupported_workflow_state",
+                )
+            )
         return self.result(findings)
 
     def _duplicate_findings(self, ids: list[str], id_key: str, path: str):

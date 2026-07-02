@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arabic-legal-research-skill:artifact-manifest:0.4.0",
+  "title": "Arabic Legal Research Artifact Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_schema_version",
+    "metadata",
+    "input_identifier",
+    "input_digest",
+    "phase3_baseline_hash",
+    "generator_version",
+    "render_config_digest",
+    "pre_word_docx",
+    "word_finalized_docx",
+    "word_evidence",
+    "generated_at",
+    "validations",
+    "allowed_claims",
+    "prohibited_claims",
+    "limitations",
+    "final_artifact_status"
+  ],
+  "properties": {
+    "manifest_schema_version": { "const": "0.4.0" },
+    "metadata": {
+      "type": "object",
+      "required": ["tool", "package_version"],
+      "properties": {
+        "tool": { "const": "legal_research_skill" },
+        "package_version": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "input_identifier": { "type": "string", "minLength": 1 },
+    "input_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "phase3_baseline_hash": { "type": "string", "minLength": 7 },
+    "generator_version": { "type": "string", "minLength": 1 },
+    "render_config_digest": { "type": "string", "minLength": 8 },
+    "pre_word_docx": { "$ref": "#/$defs/artifact" },
+    "word_finalized_docx": { "$ref": "#/$defs/artifact" },
+    "word_evidence": { "type": "object" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "validations": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "allowed_claims": { "type": "array", "items": { "type": "string" } },
+    "prohibited_claims": { "type": "array", "items": { "type": "string" } },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "final_artifact_status": {
+      "enum": [
+        "DRAFT_GENERATED",
+        "STRUCTURALLY_VALID",
+        "WORD_FINALIZED",
+        "WORD_VALIDATED",
+        "REQUIRES_REVIEW",
+        "BLOCKED",
+        "FAILED"
+      ]
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": ["string", "null"] },
+        "sha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

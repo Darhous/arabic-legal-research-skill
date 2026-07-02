@@ -27,6 +27,14 @@ CLAIM_REQUIREMENTS = {
     "per-page footnote restart verified": ("word_footnote_restart_validated",),
 }
 
+ALWAYS_PROHIBITED_CLAIMS = {
+    "court-ready",
+    "final legal research accepted",
+    "human reviewed",
+    "source authenticity verified",
+    "submission-ready",
+}
+
 HONEST_CLAIMS = {
     "content validation completed",
     "text-level checks completed",
@@ -60,7 +68,7 @@ class OutputClaimsValidator(BaseValidator):
 
         for claim in requested:
             requirements = CLAIM_REQUIREMENTS.get(claim)
-            if claim in prohibited:
+            if claim in prohibited or claim in ALWAYS_PROHIBITED_CLAIMS:
                 findings.append(self._unsupported(claim, ["claim listed as prohibited"]))
                 continue
             if requirements:

@@ -4,10 +4,9 @@ import types
 
 import pytest
 
-from legal_research_skill.word import runner
+from legal_research_skill.word import processes, runner
 from legal_research_skill.word.availability import detect_word_availability
 from legal_research_skill.word.finalization import finalize_with_word
-from legal_research_skill.word import processes
 from legal_research_skill.word.processes import identify_word_process, terminate_owned_process
 from legal_research_skill.word.worker import word_worker_entry
 from legal_research_skill.word.worker_cli import main as worker_cli_main
