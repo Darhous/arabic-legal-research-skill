@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/readme/hero.svg" alt="Arabic Legal Research Skill — مهارة البحث القانوني العربي — by Ahmed Darhous" width="100%">
+  <img src="assets/readme/hero-arabic-legal-framework.svg" alt="Arabic Legal Research Skill Framework — مهارة البحث القانوني العربي — by Ahmed Darhous" width="100%">
 </p>
 
-<h1 align="center">🕌 Arabic Legal Research Skill</h1>
-<h3 align="center">مهارة البحث القانوني العربي</h3>
+<h1 align="center">🕌 Arabic Legal Research Skill Framework</h1>
+<h3 align="center">مهارة البحث القانوني العربي — إطار عمل متكامل</h3>
 
 <p align="center">
   <strong>أول Skill عربية متخصصة تُعلّم أدوات الذكاء الاصطناعي — ChatGPT وClaude وCodex —</strong><br>
@@ -18,6 +18,8 @@
   <img alt="Coverage 96.12 percent" src="https://img.shields.io/badge/Coverage-96.12%25-1f7a4d">
   <img alt="Arabic native" src="https://img.shields.io/badge/Language-Arabic%20%D8%B9%D8%B1%D8%A8%D9%8A-C9A227">
   <img alt="AI Skill" src="https://img.shields.io/badge/AI-ChatGPT%20%7C%20Claude%20%7C%20Codex-C9A227">
+  <img alt="Legal AI" src="https://img.shields.io/badge/Legal%20AI-Arabic%20Research-C9A227">
+  <img alt="Framework" src="https://img.shields.io/badge/Type-Framework-1E3A8A">
   <img alt="DOCX structural validation" src="https://img.shields.io/badge/DOCX-structural%20validation-8f6b2e">
   <br>
   <img alt="License MIT" src="https://img.shields.io/badge/License-MIT%20(%D9%84%D9%88%D8%AC%D9%87%20%D8%A7%D9%84%D9%84%D9%87)-334155">
@@ -27,12 +29,15 @@
 
 <p align="center">
   <a href="#-ما-فكرة-المشروع-ببساطة">الفكرة</a> ·
+  <a href="#-skill-vs-framework">Skill vs Framework</a> ·
   <a href="#-لمن-هذا-المشروع">لمن هذا المشروع</a> ·
   <a href="#-ماذا-يستطيع-المشروع-أن-يفعل">القدرات</a> ·
   <a href="#-استخدامه-داخل-chatgpt--claude-بدون-تثبيت">بدون تثبيت</a> ·
   <a href="#-الاستخدام-مع-claude-code">Claude Code</a> ·
   <a href="#-الاستخدام-مع-openai-codex">Codex</a> ·
   <a href="#-التثبيت-للمطورين">للمطورين</a> ·
+  <a href="#-أدلة-الاستخدام-حسب-دورك-playbooks">Playbooks</a> ·
+  <a href="#-سيناريوهات-جاهزة-workflows">Workflows</a> ·
   <a href="#-الرخصة-والاستخدام-المجاني-لوجه-الله">الرخصة</a>
 </p>
 
@@ -72,6 +77,26 @@
 | 🔗 **رابط داخل الشات** | ترسل رابط المستودع لـ ChatGPT/Claude وتطلب منه الالتزام بتعليماته | ❌ لا، تعمل فورًا |
 | 💻 **Claude Code / Codex** | تفتح المشروع محليًا على جهازك ويقرأ الأداة الملفات مباشرة | ✅ استنساخ فقط (بدون بايثون بالضرورة) |
 | 🛠️ **أدوات التحقق التنفيذي (CLI)** | فحص فعلي للـ Schema وتوليد DOCX وفحصه بنيويًا | ✅ تثبيت Python (قسم المطورين) |
+
+---
+
+## 🧭 Skill vs Framework
+
+**Skill** هي تعليمات نصية يقرأها النموذج ويحاول الالتزام بها. **Framework** هنا يعني: نفس
+التعليمات + طبقة تنفيذية حقيقية تتحقق من النتيجة آليًا، بدل الاكتفاء بالثقة في التزام النموذج.
+
+| الطبقة | ماذا تضيف | أين تجدها |
+|---|---|---|
+| 📜 تعليمات الـ Skill | القواعد المنهجية التي يقرأها النموذج | `SKILL.md`, `rules/`, `checklists/` |
+| 🧬 مخطط بيانات صارم | يرفض أي بيانات لا تطابق البنية المطلوبة | `schemas/*.json` |
+| ⚙️ محرك تحقق تنفيذي | يفحص فعليًا الترتيب والاستشهاد والحواشي وتعارض الأولويات | `legal-research-skill validate` |
+| 📄 مولّد ومدقق DOCX | ينتج Word فعليًا ويفحص بنيته بدل افتراضها | `render-docx`, `validate-docx` |
+| 🪟 بوابة Word اختيارية | فتح حقيقي داخل Word نفسه قبل `WORD_VALIDATED` | `finalize-word --require-word` |
+| 🧪 اختبارات آلية | تمنع أي تراجع صامت في السلوك | `tests/` (233 اختبار) |
+
+الشرح الكامل مع الأمثلة والمخططات: [`docs/framework-vs-skill.md`](docs/framework-vs-skill.md) ·
+البنية الداخلية: [`docs/architecture.md`](docs/architecture.md) · حدود دقيقة لما يُفحص فعليًا:
+[`docs/limitations.md`](docs/limitations.md) · دليل بدء سريع لكل مسار: [`docs/quickstart.md`](docs/quickstart.md).
 
 ---
 
@@ -141,6 +166,9 @@ https://github.com/Darhous/arabic-legal-research-skill
 التزم بمنهجية المشروع، ولا تخترع مصادر، واذكر حدود عدم اليقين، وراجع الناتج قبل التسليم.
 ```
 
+نسخة مفصّلة أكثر مع تحذيرات خاصة بكل نموذج: [`prompts/chatgpt.md`](prompts/chatgpt.md) ·
+[`prompts/general-use.md`](prompts/general-use.md) (تعمل مع أي نموذج آخر).
+
 ---
 
 ## 🟣 الاستخدام مع Claude Code
@@ -173,7 +201,10 @@ research skill. Follow all rules, checklists, templates, and validation
 steps before producing any legal output.
 ```
 
-Claude Code يكتشف `SKILL.md` تلقائيًا عند وجوده داخل مجلد العمل، ويمكنه أيضًا تشغيل أوامر التحقق التنفيذي (`legal-research-skill validate`, `render-docx`, ...) بنفسه للتأكد من مخرجاته — راجع [قسم المطورين](#-التثبيت-للمطورين).
+Claude Code يقرأ [`CLAUDE.md`](CLAUDE.md) تلقائيًا عند فتح مجلد المشروع — وهو دليل مختصر يحيله
+مباشرة إلى `SKILL.md` و`CODEX.md` وقواعد صارمة لأي تعديل كود. يمكنه أيضًا تشغيل أوامر التحقق
+التنفيذي (`legal-research-skill validate`, `render-docx`, ...) بنفسه للتأكد من مخرجاته — راجع
+[قسم المطورين](#-التثبيت-للمطورين) والـ Prompt الكامل في [`prompts/claude.md`](prompts/claude.md).
 
 ---
 
@@ -201,6 +232,9 @@ checklists/, templates/, and tests/. Then explain the project in simple
 Arabic and follow the skill instructions exactly in any generated legal
 research output.
 ```
+
+نسخة مفصّلة مع الفرق بين استخدام Codex لإنتاج بحث واستخدامه لتطوير الكود:
+[`prompts/codex.md`](prompts/codex.md).
 
 ---
 
@@ -252,22 +286,32 @@ legal-research-skill list-validators
 arabic-legal-research-skill/
 ├── SKILL.md              دليل تشغيل الـ Skill الأساسي لـ Claude
 ├── CODEX.md               تعليمات الصيانة والتطوير لـ Codex
-├── rules/                 قواعد المنهجية (الترتيب، الاقتباس، الحواشي، اللغة...)
-├── checklists/             قوائم مراجعة نهائية قبل أي تسليم
-├── templates/               متطلبات قوالب DOCX المستقبلية
-├── validators/              عقود المراجعين الداخليين (منهجية توثيقية)
-├── profiles/                 ملفات تعريف مؤسسية (جامعة عامة، أكاديمية شرطة)
-├── schemas/                   JSON Schema الرسمي لحالة البحث والتقارير
-├── src/legal_research_skill/    حزمة Python وأداة CLI التنفيذية
-├── examples/fixtures/            أمثلة بيانات صالحة وغير صالحة للاختبار
-├── tests/                         اختبارات Unit وIntegration وAcceptance وRegression
-├── reports/                        تقارير قابلة للقراءة الآلية
-└── .github/workflows/               إعدادات CI والإصدار
+├── CLAUDE.md               دليل استخدام سريع لـ Claude / Claude Code
+├── GPT.md                  دليل استخدام سريع لنماذج GPT / ChatGPT
+├── docs/                    هوية الـ Framework: البنية، الحدود، البدء السريع
+├── prompts/                  Prompts جاهزة لكل نموذج (ChatGPT، Claude، Codex، عام)
+├── playbooks/                 أدلة استخدام حسب الدور (طالب، محامٍ، باحث، مطوّر...)
+├── workflows/                   سيناريوهات جاهزة خطوة بخطوة (بحث، مذكرة، عقد...)
+├── rules/                        قواعد المنهجية (الترتيب، الاقتباس، الحواشي، اللغة...)
+├── checklists/                    قوائم مراجعة نهائية قبل أي تسليم
+├── templates/                      متطلبات قوالب DOCX المستقبلية
+├── validators/                      عقود المراجعين الداخليين (منهجية توثيقية)
+├── profiles/                         ملفات تعريف مؤسسية (جامعة عامة، أكاديمية شرطة)
+├── schemas/                           JSON Schema الرسمي لحالة البحث والتقارير
+├── src/legal_research_skill/            حزمة Python وأداة CLI التنفيذية
+├── examples/                              أمثلة بيانات وسيناريوهات تعليمية
+├── tests/                                   اختبارات Unit وIntegration وAcceptance وRegression
+├── reports/                                   تقارير قابلة للقراءة الآلية
+└── .github/workflows/                          إعدادات CI والإصدار
 ```
 
 | المجلد | وظيفته باختصار |
 |---|---|
 | `SKILL.md` | نقطة الدخول الرئيسية — يقرأه أي نموذج ذكاء اصطناعي أولًا. |
+| `docs/` | هوية الـ Framework: الفرق عن Skill، البنية الداخلية، الحدود، البدء السريع. |
+| `prompts/` | Prompts جاهزة للنسخ لكل نموذج (ChatGPT، Claude، Codex، وعام). |
+| `playbooks/` | دليل عملي لكل دور: مستخدم عادي، طالب، محامٍ، باحث، مطوّر. |
+| `workflows/` | خطوات كاملة لسيناريوهات شائعة (بحث، مذكرة، مراجعة عقد، DOCX...). |
 | `rules/` | القواعد التفصيلية: الترتيب، الاقتباس، الحواشي، اللغة، محرك القرار. |
 | `checklists/` | فحوصات نهائية إلزامية قبل اعتبار أي عمل مكتملًا. |
 | `validators/` | عقود مراجعة داخلية توثيقية (منهجية، لا تُستبدل بالكود). |
@@ -287,6 +331,37 @@ arabic-legal-research-skill/
 - 🚨 **"افحص هذه المصادر وحدد أيها يحتاج إلى `Requires Verification`."**
 - ✅ **"طبّق قائمة المراجعة النهائية `checklists/final-review.md` على هذا البحث قبل تسليمه."**
 - 🧭 **"تصرف كمساعد بحث قانوني منهجي والتزم بكل قواعد `rules/` أثناء العمل معي."**
+
+---
+
+## 📚 أدلة الاستخدام حسب دورك (Playbooks)
+
+كل دور له دليل عملي مباشر: لمن هذا المسار، متى تستخدمه، خطوات التنفيذ، Prompt جاهز، أخطاء يجب
+تجنبها، والمخرج المتوقع.
+
+| الدور | الدليل |
+|---|---|
+| 🙋 مستخدم عادي | [`playbooks/general-user.md`](playbooks/general-user.md) |
+| 🎓 طالب قانون | [`playbooks/student.md`](playbooks/student.md) |
+| ⚖️ محامٍ | [`playbooks/lawyer.md`](playbooks/lawyer.md) |
+| 🔬 باحث قانوني | [`playbooks/researcher.md`](playbooks/researcher.md) |
+| 👨‍💻 مطوّر | [`playbooks/developer.md`](playbooks/developer.md) |
+
+---
+
+## 🔧 سيناريوهات جاهزة (Workflows)
+
+خطوات عملية كاملة لسيناريوهات شائعة، بدل التنظير — كل Workflow ينتهي إلزاميًا بخطوة المراجعة
+النهائية.
+
+| السيناريو | الدليل |
+|---|---|
+| 📝 بحث قانوني كامل | [`workflows/legal-research.md`](workflows/legal-research.md) |
+| 📄 إعداد مذكرة قانونية | [`workflows/legal-memo.md`](workflows/legal-memo.md) |
+| 📑 مراجعة عقد | [`workflows/contract-review.md`](workflows/contract-review.md) |
+| ⚔️ تحليل قضية | [`workflows/case-analysis.md`](workflows/case-analysis.md) |
+| 📦 إنتاج DOCX تنفيذي | [`workflows/docx-production.md`](workflows/docx-production.md) |
+| ✅ المراجعة النهائية (إلزامية دائمًا) | [`workflows/final-review.md`](workflows/final-review.md) |
 
 ---
 

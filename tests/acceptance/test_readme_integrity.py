@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 README = ROOT / "README.md"
-HERO = ROOT / "assets" / "readme" / "hero.svg"
+HERO = ROOT / "assets" / "readme" / "hero-arabic-legal-framework.svg"
 
 
 def test_readme_hero_exists_and_svg_is_safe():
