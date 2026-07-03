@@ -1,41 +1,309 @@
 <p align="center">
-  <img src="assets/readme/hero.svg" alt="arabic-legal-research-skill by Ahmed Darhous" width="100%">
+  <img src="assets/readme/hero.svg" alt="Arabic Legal Research Skill — مهارة البحث القانوني العربي — by Ahmed Darhous" width="100%">
+</p>
+
+<h1 align="center">🕌 Arabic Legal Research Skill</h1>
+<h3 align="center">مهارة البحث القانوني العربي</h3>
+
+<p align="center">
+  <strong>أول Skill عربية متخصصة تُعلّم أدوات الذكاء الاصطناعي — ChatGPT وClaude وCodex —</strong><br>
+  <strong>كيف تُعِدّ بحثًا قانونيًا عربيًا منظّمًا، موثّقًا، وقابلًا للتحقق، بدل نص عشوائي "يبدو" صحيحًا.</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Darhous/arabic-legal-research-skill/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Darhous/arabic-legal-research-skill/ci.yml?branch=main&label=CI"></a>
-  <img alt="Python >=3.11" src="https://img.shields.io/badge/Python-%3E%3D3.11-2f6f9f">
-  <img alt="Tests 141 passed, 1 skipped" src="https://img.shields.io/badge/Tests-141%20passed%2C%201%20skipped-1f7a4d">
-  <img alt="Coverage 95.03 percent" src="https://img.shields.io/badge/Coverage-95.03%25-1f7a4d">
-  <img alt="Ruff enforced" src="https://img.shields.io/badge/Ruff-enforced-3f4554">
-  <img alt="Wheel smoke passed" src="https://img.shields.io/badge/Wheel%20smoke-passed-8f6b2e">
+  <a href="https://github.com/Darhous/arabic-legal-research-skill/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Darhous/arabic-legal-research-skill/ci.yml?branch=main&label=CI&color=1E3A8A"></a>
+  <img alt="Python >=3.11" src="https://img.shields.io/badge/Python-%3E%3D3.11-1E3A8A">
+  <img alt="Version 0.3.0" src="https://img.shields.io/badge/Version-0.3.0-1E3A8A">
+  <img alt="Tests 233 passed, 1 skipped" src="https://img.shields.io/badge/Tests-233%20passed-1f7a4d">
+  <img alt="Coverage 96.12 percent" src="https://img.shields.io/badge/Coverage-96.12%25-1f7a4d">
+  <img alt="Arabic native" src="https://img.shields.io/badge/Language-Arabic%20%D8%B9%D8%B1%D8%A8%D9%8A-C9A227">
+  <img alt="AI Skill" src="https://img.shields.io/badge/AI-ChatGPT%20%7C%20Claude%20%7C%20Codex-C9A227">
+  <img alt="DOCX structural validation" src="https://img.shields.io/badge/DOCX-structural%20validation-8f6b2e">
+  <br>
+  <img alt="License MIT" src="https://img.shields.io/badge/License-MIT%20(%D9%84%D9%88%D8%AC%D9%87%20%D8%A7%D9%84%D9%84%D9%87)-334155">
+  <img alt="Ruff enforced" src="https://img.shields.io/badge/Ruff-enforced-334155">
+  <img alt="Free for everyone" src="https://img.shields.io/badge/Free-مجاني%20للجميع-334155">
 </p>
 
-# arabic-legal-research-skill
+<p align="center">
+  <a href="#-ما-فكرة-المشروع-ببساطة">الفكرة</a> ·
+  <a href="#-لمن-هذا-المشروع">لمن هذا المشروع</a> ·
+  <a href="#-ماذا-يستطيع-المشروع-أن-يفعل">القدرات</a> ·
+  <a href="#-استخدامه-داخل-chatgpt--claude-بدون-تثبيت">بدون تثبيت</a> ·
+  <a href="#-الاستخدام-مع-claude-code">Claude Code</a> ·
+  <a href="#-الاستخدام-مع-openai-codex">Codex</a> ·
+  <a href="#-التثبيت-للمطورين">للمطورين</a> ·
+  <a href="#-الرخصة-والاستخدام-المجاني-لوجه-الله">الرخصة</a>
+</p>
 
-منظومة Python وClaude Skill لإدارة تحقق بحث قانوني عربي منظم، مع توليد مسودة DOCX عربية RTL وفحصها بنيويًا كحزمة OOXML. المشروع يركز على قابلية التحقق، حدود الادعاء، وسلامة المسار التنفيذي بدل الاكتفاء بتعليمات نصية عامة.
+<p align="center">⚠️ <strong>تنبيه مهم من البداية:</strong> هذا المشروع أداة <strong>تنظيمية ومنهجية</strong> للبحث القانوني، وليس بديلًا عن استشارة محامٍ أو مستشار قانوني مختص. راجع دائمًا مخرجاته مع جهة قانونية مؤهلة قبل أي استخدام رسمي.</p>
 
-## لماذا المشروع؟
+---
 
-إنتاج بحث قانوني عربي يحتاج أكثر من صياغة لغوية. يحتاج ترتيبًا منهجيًا، حماية للخطة المعتمدة، ضبطًا للمراجع والحواشي، ومخرجات يمكن اختبارها. هذا المستودع يحول تلك المتطلبات إلى schema، validators، CLI، وتقارير قابلة لإعادة التشغيل.
+## 🌟 ما فكرة المشروع ببساطة؟
 
-## القدرات المثبتة
+لو أنت مش تقني، خُد هذا الشرح البسيط:
 
-- تحقق JSON Schema لحالة البحث.
-- Phase 3 validation gate عبر validators تنفيذية.
-- حماية عناوين الخطة المعتمدة وترتيبها.
-- فحص الاقتباسات والحواشي والببليوغرافيا وحدود التحقق.
-- توليد DOCX عربي RTL من fixture صالح.
-- فحص DOCX بنيويًا: parts، relationships، XML، styles، RTL، fields، footnotes، page setup، وموانع المحتوى الخارجي.
-- manifest يحتوي hashes وحالة artifact.
-- Word worker اختياري مع مهلة زمنية وتنظيف محدود بالملكية المثبتة.
-- wheel build وinstalled-wheel smoke من خارج root المستودع.
+### ما معنى "Skill"؟
 
-## الحدود
+تخيّل أنك وظّفت مساعدًا ذكيًا جدًا (مثل ChatGPT أو Claude)، لكنه في كل مرة تطلب منه بحثًا قانونيًا، يتصرف بشكل مختلف: مرة يلتزم بترتيب معين، ومرة يخترع مصادر، ومرة ينسى الحواشي. **"Skill"** هي ببساطة **دفتر تعليمات ثابت ومكتوب بدقة**، تُعطيه للمساعد الذكي ليقرأه ويلتزم به **في كل مرة بنفس الطريقة**، بدل الاعتماد على الحظ أو صياغة السؤال.
 
-لا يثبت المشروع صحة الرأي القانوني، ولا يتحقق من أصالة المصادر عبر الإنترنت، ولا يقدم مراجعة بشرية، ولا يقرر صلاحية الإيداع أو الطباعة النهائية. عند تعذر التحقق من مصدر أو سلوك Word، يظل ذلك قيدًا مصرحًا به في التقرير.
+### لماذا نحتاج تعليمات ثابتة للذكاء الاصطناعي؟
 
-## Architecture
+لأن النماذج اللغوية —مهما كانت قوية— تميل أحيانًا إلى:
+
+- تغيير ترتيب البحث من مرة لأخرى.
+- اختراع مصادر أو اقتباسات غير موجودة (Hallucination).
+- الإعلان أن البحث "جاهز ونهائي" بينما ينقصه مراجعة أساسية.
+- عدم الالتزام بخطة البحث المعتمدة من المشرف.
+
+### ما المشكلة التي يحلها المشروع؟
+
+هذا المشروع يحوّل قواعد "كتابة البحث القانوني العربي الصحيح" من نصائح عامة إلى **تعليمات مكتوبة، منظمة، ومقيَّدة بمنهجية واضحة** — تشمل ترتيب الأقسام، حماية الخطة المعتمدة، قواعد الاقتباس والحواشي، وقوائم مراجعة نهائية قبل تسليم أي شيء.
+
+### كيف يساعد في الأبحاث القانونية العربية تحديدًا؟
+
+لأن البحث القانوني العربي له خصوصيات: تسلسل هرمي محدد (`قسم ← باب ← فصل ← مبحث ← مطلب`)، أسلوب أكاديمي رسمي، قواعد اقتباس دقيقة للقرآن والحديث والمصادر الرسمية، وحواشي مرتبطة فعليًا بمحتوى الصفحة. المشروع يحوّل كل هذه الخصوصيات إلى قواعد صريحة يلتزم بها النموذج.
+
+### الفرق بين استخدامه كملفات Repo واستخدامه كرابط داخل الشات؟
+
+| الطريقة | كيف تعمل | تحتاج تثبيت؟ |
+|---|---|---|
+| 🔗 **رابط داخل الشات** | ترسل رابط المستودع لـ ChatGPT/Claude وتطلب منه الالتزام بتعليماته | ❌ لا، تعمل فورًا |
+| 💻 **Claude Code / Codex** | تفتح المشروع محليًا على جهازك ويقرأ الأداة الملفات مباشرة | ✅ استنساخ فقط (بدون بايثون بالضرورة) |
+| 🛠️ **أدوات التحقق التنفيذي (CLI)** | فحص فعلي للـ Schema وتوليد DOCX وفحصه بنيويًا | ✅ تثبيت Python (قسم المطورين) |
+
+---
+
+## 👥 لمن هذا المشروع؟
+
+| الفئة | كيف يفيدك المشروع |
+|---|---|
+| 🎓 **طالب قانون** | خطة بحث منظمة تلتزم بترتيب أكاديمي معتمد، بدل الارتجال. |
+| 🔬 **باحث قانوني** | منهجية ثابتة لكل بحث: مقدمة منهجية كاملة، حواشي، ببليوغرافيا موثقة. |
+| ⚖️ **محامٍ** | مذكرات ومراجعات منظمة الشكل، مع الإشارة الواضحة لكل ما يحتاج تحققًا بشريًا. |
+| 👨‍💻 **مطوّر يبني Legal AI** | Schema وValidators جاهزة وCLI تنفيذي يمكن دمجه في أي نظام. |
+| 🙋 **مستخدم عادي** | بحث منظم الشكل دون الحاجة لأي خبرة تقنية — فقط أرسل رابط المستودع. |
+| 🤖 **مستخدم Codex / Claude / ChatGPT** | تعليمات جاهزة تحوّل أي محادثة إلى جلسة بحث قانوني منضبطة. |
+
+---
+
+## 🧰 ماذا يستطيع المشروع أن يفعل؟
+
+<table>
+<tr><td width="50%">
+
+**📐 تنظيم ومنهجية**
+- فرض ترتيب `قسم ← باب ← فصل ← مبحث ← مطلب`.
+- حماية الخطة المعتمدة من المشرف دون تعديل غير مصرّح.
+- مقدمة منهجية كاملة (مشكلة، أهمية، دراسات سابقة، أهداف...).
+
+**📎 مصداقية المصادر**
+- منع اختراع مصادر أو اقتباسات.
+- تمييز أي مصدر لم يُتحقق منه بعلامة `Requires Verification` صريحة.
+- قواعد دقيقة للاقتباس المباشر وغير المباشر وآيات القرآن والحديث.
+
+</td><td width="50%">
+
+**🧾 جودة ومراجعة**
+- قوائم فحص نهائية قبل أي تسليم (منهجية، اقتباس، تنسيق، مراجعة أخيرة).
+- تقليل الهلوسة عبر تعليمات صريحة ومقيّدة بدل نص حر.
+- قواعد صياغة أكاديمية عربية رسمية (بلا حماس أو مبالغة أو تعميم).
+
+**📄 مخرجات DOCX (عند توفر الأداة)**
+- توليد DOCX عربي RTL كامل من بيانات بحث منظمة.
+- فحص بنيوي فعلي لملف DOCX الناتج (وليس افتراضًا شكليًا).
+
+</td></tr>
+</table>
+
+> ⚠️ **تذكير ضروري:** لا يثبت المشروع صحة الرأي القانوني، ولا يتحقق من أصالة المصادر عبر الإنترنت، ولا يقدّم مراجعة بشرية، ولا يقرر صلاحية الإيداع أو الطباعة النهائية. أي نتيجة يُعلن عنها المشروع محدودة بالضبط بما تم فحصه فعليًا — لا أكثر.
+
+---
+
+## 💬 استخدامه داخل ChatGPT / Claude بدون تثبيت
+
+هذه أسهل طريقة للمبتدئين تمامًا — **لا تحتاج تثبيت أي شيء**:
+
+1. افتح ChatGPT أو Claude في المتصفح.
+2. أرسل رابط هذا المستودع: `https://github.com/Darhous/arabic-legal-research-skill`
+3. اطلب من النموذج مراجعة المستودع والالتزام بتعليماته كأنه Skill مفعّلة لديه.
+4. بعد ذلك، اطلب منه إعداد بحث أو مذكرة أو مراجعة قانونية على موضوعك.
+5. اطلب منه الالتزام تحديدًا بالملفات: `SKILL.md`، `CODEX.md`، `checklists/final-review.md`، `rules/`، `templates/`.
+
+### 📋 Prompt جاهز للنسخ
+
+```text
+راجع المستودع التالي والتزم بجميع تعليماته كأنها Skill مفعّلة لديك:
+https://github.com/Darhous/arabic-legal-research-skill
+
+بعد المراجعة، أريد منك إعداد بحث قانوني عربي حول: [اكتب الموضوع هنا]
+التزم بمنهجية المشروع، ولا تخترع مصادر، واذكر حدود عدم اليقين، وراجع الناتج قبل التسليم.
+```
+
+---
+
+## 🟣 الاستخدام مع Claude Code
+
+Claude Code هو الواجهة التطويرية لـ Claude التي تعمل من سطر الأوامر وتقرأ ملفات مشروعك مباشرة.
+
+**الخطوات:**
+
+1. استنسخ المستودع:
+
+   ```bash
+   git clone https://github.com/Darhous/arabic-legal-research-skill.git
+   cd arabic-legal-research-skill
+   ```
+
+2. افتح Claude Code داخل مجلد المشروع:
+
+   ```bash
+   claude
+   ```
+
+3. اطلب منه قراءة `SKILL.md` و`CODEX.md` أولًا.
+4. استخدم الـ Prompt الجاهز التالي:
+
+### 📋 Prompt جاهز لـ Claude Code
+
+```text
+Read SKILL.md and CODEX.md first. Treat this repository as the active legal
+research skill. Follow all rules, checklists, templates, and validation
+steps before producing any legal output.
+```
+
+Claude Code يكتشف `SKILL.md` تلقائيًا عند وجوده داخل مجلد العمل، ويمكنه أيضًا تشغيل أوامر التحقق التنفيذي (`legal-research-skill validate`, `render-docx`, ...) بنفسه للتأكد من مخرجاته — راجع [قسم المطورين](#-التثبيت-للمطورين).
+
+---
+
+## ⚫ الاستخدام مع OpenAI Codex
+
+**الخطوات:**
+
+1. استنسخ المستودع وافتحه في Codex:
+
+   ```bash
+   git clone https://github.com/Darhous/arabic-legal-research-skill.git
+   cd arabic-legal-research-skill
+   codex
+   ```
+
+2. اجعله يقرأ `README.md` و`SKILL.md` و`CODEX.md` والمجلدات الأساسية أولًا.
+3. اطلب منه الالتزام بالتعليمات الموجودة قبل أي عمل.
+4. استخدمه بعدها لتطوير المشروع نفسه، أو لإنتاج مستندات بحث قانوني وفق قواعد المشروع.
+
+### 📋 Prompt جاهز لـ Codex
+
+```text
+Before doing anything, read README.md, SKILL.md, CODEX.md, rules/,
+checklists/, templates/, and tests/. Then explain the project in simple
+Arabic and follow the skill instructions exactly in any generated legal
+research output.
+```
+
+---
+
+## 🛠️ التثبيت للمطورين
+
+هذا القسم لمن يريد تشغيل أدوات التحقق التنفيذي الحقيقية (CLI): توليد DOCX، الفحص البنيوي، وتشغيل الاختبارات.
+
+```bash
+git clone https://github.com/Darhous/arabic-legal-research-skill.git
+cd arabic-legal-research-skill
+python -m venv .venv
+```
+
+فعّل البيئة الافتراضية:
+
+**Windows:**
+
+```bash
+.venv\Scripts\activate
+```
+
+**macOS/Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+ثم ثبّت المشروع وشغّل الاختبارات:
+
+```bash
+python -m pip install -U pip
+pip install -e ".[dev]"
+pytest
+```
+
+تحقق من نجاح التثبيت:
+
+```bash
+legal-research-skill list-validators
+```
+
+> المتطلبات: Python `>=3.11`. لا توجد مطالبة بنشر PyPI حاليًا. Windows وMicrosoft Word وpywin32 مطلوبة فقط عند تشغيل بوابة Word الاختيارية.
+
+---
+
+## 🗂️ هيكل المشروع
+
+```text
+arabic-legal-research-skill/
+├── SKILL.md              دليل تشغيل الـ Skill الأساسي لـ Claude
+├── CODEX.md               تعليمات الصيانة والتطوير لـ Codex
+├── rules/                 قواعد المنهجية (الترتيب، الاقتباس، الحواشي، اللغة...)
+├── checklists/             قوائم مراجعة نهائية قبل أي تسليم
+├── templates/               متطلبات قوالب DOCX المستقبلية
+├── validators/              عقود المراجعين الداخليين (منهجية توثيقية)
+├── profiles/                 ملفات تعريف مؤسسية (جامعة عامة، أكاديمية شرطة)
+├── schemas/                   JSON Schema الرسمي لحالة البحث والتقارير
+├── src/legal_research_skill/    حزمة Python وأداة CLI التنفيذية
+├── examples/fixtures/            أمثلة بيانات صالحة وغير صالحة للاختبار
+├── tests/                         اختبارات Unit وIntegration وAcceptance وRegression
+├── reports/                        تقارير قابلة للقراءة الآلية
+└── .github/workflows/               إعدادات CI والإصدار
+```
+
+| المجلد | وظيفته باختصار |
+|---|---|
+| `SKILL.md` | نقطة الدخول الرئيسية — يقرأه أي نموذج ذكاء اصطناعي أولًا. |
+| `rules/` | القواعد التفصيلية: الترتيب، الاقتباس، الحواشي، اللغة، محرك القرار. |
+| `checklists/` | فحوصات نهائية إلزامية قبل اعتبار أي عمل مكتملًا. |
+| `validators/` | عقود مراجعة داخلية توثيقية (منهجية، لا تُستبدل بالكود). |
+| `templates/` | متطلبات قوالب DOCX المستقبلية (لا تحتوي حاليًا ملفات `.docx` جاهزة). |
+| `schemas/` | التعريف الرسمي الملزم لبنية بيانات البحث والتقارير. |
+| `src/legal_research_skill/` | أداة CLI الفعلية: تحقق Schema، Validators تنفيذية، توليد DOCX، فحص بنيوي. |
+
+---
+
+## 🧪 أمثلة استخدام عملية
+
+جرّب هذه الطلبات (سواء داخل الشات العادي أو Claude Code أو Codex بعد تحميل التعليمات):
+
+- 📝 **"أعدّ لي خطة بحث قانوني حول المسؤولية المدنية للطبيب في القانون المصري."**
+- 🔍 **"راجع هذه المذكرة القانونية وتأكد من التزامها بترتيب الأقسام المطلوب."**
+- 📄 **"حوّل هذا البحث إلى هيكل جاهز لتوليد DOCX وفق قواعد المشروع."**
+- 🚨 **"افحص هذه المصادر وحدد أيها يحتاج إلى `Requires Verification`."**
+- ✅ **"طبّق قائمة المراجعة النهائية `checklists/final-review.md` على هذا البحث قبل تسليمه."**
+- 🧭 **"تصرف كمساعد بحث قانوني منهجي والتزم بكل قواعد `rules/` أثناء العمل معي."**
+
+---
+
+## 🔄 Workflow
+
+```mermaid
+flowchart TD
+  A[المستخدم يرسل الموضوع] --> B[قراءة تعليمات Skill]
+  B --> C[تحديد النطاق القانوني]
+  C --> D[جمع وتحليل المعلومات]
+  D --> E[صياغة منظمة]
+  E --> F[مراجعة نهائية]
+  F --> G[تسليم الناتج]
+```
+
+<details>
+<summary><strong>🔬 مسار التحقق التنفيذي الكامل (CLI) — انقر للتوسيع</strong></summary>
 
 ```mermaid
 flowchart LR
@@ -49,47 +317,7 @@ flowchart LR
   F -->|completed| G
 ```
 
-## Workflow
-
-1. اقرأ research-state JSON.
-2. تحقق من schema.
-3. شغل validators الخاصة بالمنهجية، الخطة، الإحالات، الحواشي، والمطالبات.
-4. ولّد DOCX بنيويًا.
-5. افحص DOCX كحزمة OOXML.
-6. شغل Word gate عند الطلب فقط.
-7. اكتب artifact manifest.
-
-## المتطلبات
-
-- Python `>=3.11`.
-- dependency runtime: `jsonschema>=4.22`.
-- Windows وMicrosoft Word وpywin32 مطلوبة فقط عند تشغيل Word gate الحقيقي.
-- الاختبارات العادية وCI لا تشغل Word الحقيقي.
-
-## التثبيت
-
-من المصدر المحلي:
-
-```bash
-python -m pip install .
-```
-
-للتطوير:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-من wheel محلية بعد البناء:
-
-```bash
-python -m pip wheel . --no-deps --no-build-isolation --wheel-dir dist
-python -m pip install dist/arabic_legal_research_skill-0.3.0-py3-none-any.whl
-```
-
-لا توجد مطالبة بنشر PyPI حاليًا.
-
-## Quick Start
+### أوامر Quick Start
 
 ```bash
 legal-research-skill schema-check examples/fixtures/valid/minimal-valid.json --format json
@@ -99,74 +327,7 @@ legal-research-skill validate-docx out/draft.docx --format json
 legal-research-skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir out/artifact --format json
 ```
 
-## أمثلة CLI
-
-عرض validators:
-
-```bash
-legal-research-skill list-validators
-```
-
-شرح قاعدة محلية:
-
-```bash
-legal-research-skill explain CLAIM-001
-```
-
-فحص fixture غير صالح:
-
-```bash
-legal-research-skill validate examples/fixtures/invalid/unsupported-output-claim.json --format json
-```
-
-## DOCX Generation
-
-أمر `render-docx` ينتج ملف DOCX ويفحصه بنيويًا مباشرة:
-
-```bash
-legal-research-skill render-docx examples/fixtures/valid/approved-plan-locked.json --output out/research.docx --format json
-```
-
-النتيجة الصالحة تعني أن الحزمة البنيوية سليمة وفق فاحص المشروع، ولا تعني مراجعة Word أو مراجعة بشرية.
-
-## Structural Validation
-
-```bash
-legal-research-skill validate-docx out/research.docx --format json
-```
-
-الفاحص يرفض العلاقات الخارجية، المسارات غير الآمنة داخل ZIP، أجزاء تنفيذية أو ماكرو، XML غير صالح، وغياب الأجزاء المطلوبة.
-
-## Microsoft Word Gate
-
-Word gate اختياري:
-
-```bash
-legal-research-skill finalize-word out/research.docx --output out/research-word.docx --word-timeout-seconds 60 --format json
-```
-
-وعند جعله إلزاميًا داخل artifact build:
-
-```bash
-legal-research-skill build-artifact examples/fixtures/valid/approved-plan-locked.json --output-dir out/artifact-word --require-word --word-timeout-seconds 60 --format json
-```
-
-في بيئة Phase 6 الحالية، pywin32 وWord COM مسجلان، لكن `DispatchEx("Word.Application")` يتوقف حتى انتهاء المهلة. المسار يعود بـ`TIMEOUT`، ينهي worker فقط، ولا يقتل جلسات Word غير مثبتة الملكية، ولا ينتج ملف Word نهائيًا.
-
-## Artifact Manifest
-
-`build-artifact` يكتب:
-
-- DOCX قبل Word gate.
-- `artifact-manifest.json`.
-- hashes للمدخلات والمخرجات.
-- claims مسموحة وممنوعة.
-- limitations صريحة.
-- Word evidence عند تشغيل gate.
-
-## Result States وExit Codes
-
-الحالات العملية:
+### حالات النتيجة وExit Codes
 
 - `STRUCTURALLY_VALID`: DOCX البنيوي صالح.
 - `BLOCKED`: بوابة مطلوبة لم تمر.
@@ -175,41 +336,21 @@ legal-research-skill build-artifact examples/fixtures/valid/approved-plan-locked
 - `NOT_RUN`: Word gate غير مطلوب.
 - `NOT_AVAILABLE`: Word أو pywin32 غير متاحين.
 
-Exit codes:
+Exit codes: `0` نجاح · `1` فشل تحقق/artifact · `2` خطأ إدخال · `3` Word gate إلزامي ومحجوب · `4` فشل Word غير متوقع.
 
-- `0`: نجاح العملية المطلوبة.
-- `1`: فشل تحقق أو artifact.
-- `2`: خطأ إدخال أو وسيطات.
-- `3`: Word gate إلزامي ومحجوب أو غير متاح.
-- `4`: فشل Word غير متوقع بعد طلب gate.
+### بوابة Microsoft Word (اختيارية)
 
-## مثال مخرجات مختصر
-
-```json
-{
-  "final_artifact_status": "STRUCTURALLY_VALID",
-  "allowed_claims": ["DOCX generated", "DOCX structurally validated", "RTL structurally applied"],
-  "word_evidence": {"status": "NOT_RUN", "availability": "not_checked"}
-}
+```bash
+legal-research-skill finalize-word out/draft.docx --output out/draft-word.docx --word-timeout-seconds 60 --format json
 ```
 
-## بنية المستودع
+Word gate اختياري تمامًا، يعمل داخل worker معزول بمهلة زمنية، ولا يقتل أي جلسة Word غير مثبتة الملكية بأي حال — يتحقق من هوية العملية عبر معايير متعددة قبل أي إنهاء.
 
-```text
-src/legal_research_skill/     Python package and CLI
-schemas/                      Canonical JSON schemas
-rules/                        Legal research operating rules
-validators/                   Reviewer contracts
-examples/fixtures/            Valid and invalid research-state fixtures
-tests/                        Unit, integration, acceptance, regression tests
-reports/                      Machine-readable and phase reports
-assets/readme/                GitHub presentation assets
-.github/workflows/            CI configuration
-```
+</details>
 
-## الاختبارات والجودة
+---
 
-الأوامر الرسمية:
+## ✅ الاختبارات والجودة
 
 ```bash
 python -m compileall src
@@ -218,45 +359,44 @@ ruff check .
 pytest
 ```
 
-Phase 6 result: `141 passed, 1 skipped`, coverage `95.03%`. حد القبول في `pyproject.toml` هو `95%`.
+الحالة الحالية: **233 اختبار ناجح، 1 متجاوَز (skip)**، بتغطية **96.12%** — حد القبول الرسمي في المشروع `95%`.
 
-## الأمان
+## 🔐 الأمان
 
 - لا يستخدم `eval` أو `exec`.
-- لا يستخدم shell command composition داخل Python runner.
-- لا ينفذ ماكرو داخل DOCX.
-- لا يسمح بعلاقات DOCX خارجية.
-- لا يقتل عمليات Word العامة.
-- لا يكتب أسرارًا في fixtures أو reports.
+- لا ينفذ ماكرو داخل DOCX ولا يسمح بعلاقات خارجية.
+- لا يقتل عمليات Word العامة — تحقق ملكية متعدد المعايير قبل أي إنهاء عملية.
+- لا يكتب أسرارًا في الأمثلة أو التقارير.
+- GitHub Actions مثبتة بـ commit SHA وليس بوسم متحرك.
 
-## Reproducibility
+---
 
-المخرجات البنيوية تعتمد على fixture ثابتة، schema ثابت، وrenderer deterministic. Word output ليس جزءًا من ضمان التكرارية ما دام COM dispatch محجوبًا في هذه البيئة.
+## 🕊️ الرخصة والاستخدام المجاني (لوجه الله)
 
-## القيود البيئية
+هذا المشروع **مجاني بالكامل، لوجه الله تعالى** — صدقة علمية يُرجى صاحبها منها النفع والأجر لا المقابل المادي.
 
-- Word gate الحقيقي يتطلب جلسة Windows/Office قابلة للأتمتة.
-- في Phase 6، آخر checkpoint مؤكد: `dispatch_started`.
-- ownership لعملية Word لم يثبت لأن `app.Hwnd` لم يعد قبل المهلة.
-- installed-wheel smoke استخدم dependency محلية مثبتة للنظام لـ`jsonschema` دون تنزيل من الشبكة.
+- ✅ يمكنك **استخدامه، تعديله، تطويره، وإعادة نشره** بحرية كاملة، تجاريًا أو غير تجاري.
+- 🙏 يُرجى فقط **الحفاظ على نسبة الفضل** لصاحب المشروع الأصلي، أحمد درهوس (Ahmed Darhous)، عند إعادة الاستخدام أو النشر.
+- 🚫 **لا يجوز** استخدام المشروع لتضليل الناس أو تقديم استشارات قانونية كاذبة باسم جهة رسمية أو مهنية.
+- ⚖️ هذا المشروع **لا يغني عن المحامي المختص أو المستشار القانوني** في أي حال من الأحوال.
 
-## المساهمة
+المشروع مرخّص رسميًا بموجب [رخصة MIT](LICENSE)، مع توضيح عربي محترم في أعلى ملف الرخصة يؤكد أنه صدقة علمية مجانية. راجع ملف [`LICENSE`](LICENSE) للنص الكامل.
+
+---
+
+## 🤝 المساهمة
 
 راجع [CONTRIBUTING.md](CONTRIBUTING.md). أي تغيير يجب أن يحافظ على حدود الادعاء، حد coverage، وسلامة DOCX/Word.
 
-## Security Reporting
+## 🛡️ الإبلاغ عن مشاكل أمنية
 
 راجع [SECURITY.md](SECURITY.md). للإبلاغ الخاص: `ahmeddarhous@gmail.com`.
 
-## License Status
-
-لم يتم تحديد رخصة نشر في هذا المستودع حتى الآن. لا يوجد ملف `LICENSE`، ولا يضيف هذا الإصدار رخصة نيابة عن صاحب المشروع.
-
-**تنبيه صريح:** كون هذا المستودع عامًا (Public) على GitHub لا يمنح تلقائيًا أي حق في إعادة الاستخدام أو النسخ أو التعديل أو إعادة التوزيع أو الاستخدام التجاري. بدون ملف `LICENSE`، يُحتفظ بجميع الحقوق لصاحب المشروع افتراضيًا (All rights reserved)، والاطلاع على الكود لا يعني الحصول على إذن لاستخدامه.
+---
 
 ## المؤلف
 
-Ahmed Darhous
+**Designed & Developed by Ahmed Darhous**
 
 <p align="center">
   <a href="https://www.instagram.com/darhous/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>

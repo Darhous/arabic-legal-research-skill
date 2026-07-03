@@ -1,61 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 560" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
   <title id="title">arabic-legal-research-skill by Ahmed Darhous</title>
-  <desc id="desc">Legal-tech hero graphic for an Arabic research validation and DOCX artifact pipeline.</desc>
+  <desc id="desc">Arabic Legal Research Skill — مهارة البحث القانوني العربي، منظومة تحقق قانونية-تقنية للبحث العربي وملفات DOCX البنيوية.</desc>
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#08111f"/>
-      <stop offset="0.55" stop-color="#111827"/>
-      <stop offset="1" stop-color="#15100a"/>
+      <stop offset="0" stop-color="#0B132B"/>
+      <stop offset="0.55" stop-color="#132146"/>
+      <stop offset="1" stop-color="#0B132B"/>
     </linearGradient>
     <linearGradient id="gold" x1="0" x2="1" y1="0" y2="0">
       <stop offset="0" stop-color="#9f7a38"/>
-      <stop offset="0.5" stop-color="#d9bd73"/>
+      <stop offset="0.5" stop-color="#C9A227"/>
       <stop offset="1" stop-color="#8f6b2e"/>
     </linearGradient>
-    <linearGradient id="silver" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="#cfd6df"/>
-      <stop offset="1" stop-color="#7f8da3"/>
+    <linearGradient id="ivory" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#F8F5EC"/>
+      <stop offset="1" stop-color="#cfd6df"/>
     </linearGradient>
     <pattern id="arabesque" width="92" height="92" patternUnits="userSpaceOnUse">
-      <path d="M46 4 88 46 46 88 4 46Z" fill="none" stroke="#d9bd73" stroke-opacity="0.13" stroke-width="2"/>
-      <path d="M46 18 74 46 46 74 18 46Z" fill="none" stroke="#cfd6df" stroke-opacity="0.10" stroke-width="1.5"/>
+      <path d="M46 4 88 46 46 88 4 46Z" fill="none" stroke="#C9A227" stroke-opacity="0.14" stroke-width="2"/>
+      <path d="M46 18 74 46 46 74 18 46Z" fill="none" stroke="#F8F5EC" stroke-opacity="0.09" stroke-width="1.5"/>
     </pattern>
   </defs>
-  <rect width="1600" height="560" fill="url(#bg)"/>
-  <rect width="1600" height="560" fill="url(#arabesque)" opacity="0.72"/>
-  <path d="M0 448 C260 390 430 508 700 448 C1010 380 1230 430 1600 350 L1600 560 L0 560Z" fill="#050914" opacity="0.55"/>
-  <g transform="translate(1120 78)" opacity="0.95">
-    <rect x="62" y="52" width="250" height="340" rx="12" fill="#141b29" stroke="#cfd6df" stroke-opacity="0.35" stroke-width="2"/>
-    <path d="M106 116h164M106 154h164M106 192h126M106 258h164M106 296h138" stroke="url(#silver)" stroke-width="10" stroke-linecap="round" opacity="0.88"/>
+  <rect width="1600" height="620" fill="url(#bg)"/>
+  <rect width="1600" height="620" fill="url(#arabesque)" opacity="0.72"/>
+  <path d="M0 500 C260 440 430 566 700 500 C1010 424 1230 480 1600 396 L1600 620 L0 620Z" fill="#050914" opacity="0.55"/>
+  <g transform="translate(1120 92)" opacity="0.95">
+    <rect x="62" y="52" width="250" height="340" rx="12" fill="#141b29" stroke="#F8F5EC" stroke-opacity="0.35" stroke-width="2"/>
+    <path d="M106 116h164M106 154h164M106 192h126M106 258h164M106 296h138" stroke="url(#ivory)" stroke-width="10" stroke-linecap="round" opacity="0.88"/>
     <path d="M88 80h196" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
     <g transform="translate(-64 38)">
       <path d="M216 0v214" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
       <path d="M150 52h132" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
-      <path d="M170 52 122 176h96Z" fill="none" stroke="#cfd6df" stroke-width="6" stroke-linejoin="round"/>
-      <path d="M262 52 214 176h96Z" fill="none" stroke="#cfd6df" stroke-width="6" stroke-linejoin="round"/>
-      <path d="M108 176h124M200 176h124" stroke="#d9bd73" stroke-width="6" stroke-linecap="round"/>
+      <path d="M170 52 122 176h96Z" fill="none" stroke="#F8F5EC" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M262 52 214 176h96Z" fill="none" stroke="#F8F5EC" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M108 176h124M200 176h124" stroke="#C9A227" stroke-width="6" stroke-linecap="round"/>
       <path d="M180 230h72M154 252h124" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
     </g>
     <g transform="translate(28 420)">
-      <rect width="360" height="26" rx="13" fill="#d9bd73" opacity="0.9"/>
-      <rect x="56" y="-46" width="248" height="22" rx="11" fill="#cfd6df" opacity="0.62"/>
+      <rect width="360" height="26" rx="13" fill="#C9A227" opacity="0.9"/>
+      <rect x="56" y="-46" width="248" height="22" rx="11" fill="#F8F5EC" opacity="0.62"/>
     </g>
   </g>
-  <g transform="translate(86 96)">
-    <text x="0" y="0" fill="#d9bd73" font-family="Arial, sans-serif" font-size="34" font-weight="700">Ahmed Darhous</text>
-    <text x="0" y="86" fill="#f4f7fb" font-family="Arial, sans-serif" font-size="70" font-weight="800">arabic-legal-research-skill</text>
-    <text x="0" y="148" fill="#cfd6df" font-family="Arial, sans-serif" font-size="34">منظومة تحقق قانونية-تقنية للبحث العربي وملفات DOCX البنيوية</text>
-    <g transform="translate(0 212)">
-      <rect width="210" height="58" rx="8" fill="#151f2f" stroke="#d9bd73" stroke-width="2"/>
-      <text x="105" y="37" text-anchor="middle" fill="#f4f7fb" font-family="Arial, sans-serif" font-size="24">Schema Gate</text>
-      <path d="M224 29h78" stroke="#d9bd73" stroke-width="4" stroke-linecap="round"/>
-      <rect x="318" width="210" height="58" rx="8" fill="#151f2f" stroke="#cfd6df" stroke-width="2"/>
-      <text x="423" y="37" text-anchor="middle" fill="#f4f7fb" font-family="Arial, sans-serif" font-size="24">Validation</text>
-      <path d="M542 29h78" stroke="#cfd6df" stroke-width="4" stroke-linecap="round"/>
-      <rect x="636" width="210" height="58" rx="8" fill="#151f2f" stroke="#d9bd73" stroke-width="2"/>
-      <text x="741" y="37" text-anchor="middle" fill="#f4f7fb" font-family="Arial, sans-serif" font-size="24">DOCX Artifact</text>
+  <g transform="translate(86 100)">
+    <text x="0" y="0" fill="#C9A227" font-family="Arial, sans-serif" font-size="30" font-weight="700">Ahmed Darhous</text>
+    <text x="0" y="80" fill="#F8F5EC" font-family="Arial, sans-serif" font-size="64" font-weight="800">arabic-legal-research-skill</text>
+    <text x="0" y="130" fill="#C9A227" font-family="Arial, sans-serif" font-size="32" font-weight="700">Arabic Legal Research Skill</text>
+    <text x="0" y="182" fill="#F8F5EC" font-family="Arial, sans-serif" font-size="34" font-weight="700">مهارة البحث القانوني العربي</text>
+    <text x="0" y="226" fill="#9aa6b8" font-family="Arial, sans-serif" font-size="24">منظومة تحقق قانونية-تقنية للبحث العربي وملفات DOCX البنيوية</text>
+    <g transform="translate(0 268)">
+      <rect width="210" height="58" rx="8" fill="#151f2f" stroke="#C9A227" stroke-width="2"/>
+      <text x="105" y="37" text-anchor="middle" fill="#F8F5EC" font-family="Arial, sans-serif" font-size="24">Schema Gate</text>
+      <path d="M224 29h78" stroke="#C9A227" stroke-width="4" stroke-linecap="round"/>
+      <rect x="318" width="210" height="58" rx="8" fill="#151f2f" stroke="#F8F5EC" stroke-width="2"/>
+      <text x="423" y="37" text-anchor="middle" fill="#F8F5EC" font-family="Arial, sans-serif" font-size="24">Validation</text>
+      <path d="M542 29h78" stroke="#F8F5EC" stroke-width="4" stroke-linecap="round"/>
+      <rect x="636" width="210" height="58" rx="8" fill="#151f2f" stroke="#C9A227" stroke-width="2"/>
+      <text x="741" y="37" text-anchor="middle" fill="#F8F5EC" font-family="Arial, sans-serif" font-size="24">DOCX Artifact</text>
     </g>
-    <path d="M0 332h850" stroke="url(#gold)" stroke-width="3" opacity="0.72"/>
-    <text x="0" y="384" fill="#9aa6b8" font-family="Arial, sans-serif" font-size="24">RTL structure · claim boundaries · reproducible validation</text>
+    <path d="M0 388h850" stroke="url(#gold)" stroke-width="3" opacity="0.72"/>
+    <text x="0" y="440" fill="#9aa6b8" font-family="Arial, sans-serif" font-size="24">RTL structure · claim boundaries · reproducible validation</text>
   </g>
 </svg>
