@@ -1,6 +1,17 @@
 # Examples
 
-This directory contains Phase 3 structured JSON fixtures for the executable validation substrate.
+<!-- Designed by Ahmed Darhous -- https://github.com/darhous -->
+
+This directory contains two kinds of examples:
+
+1. Narrative, beginner-friendly scenario examples (`basic-legal-research/`, `legal-memo/`,
+   `contract-review/`, `bad-vs-good-output/`, `docx-artifact/`), each with `input.md` (the prompt
+   sent to a model), `expected-output.md` (an illustrative or, for `docx-artifact/`, a real
+   captured result), and `notes.md` (caveats and how to reproduce it). See
+   [`playbooks/`](../playbooks/) and [`workflows/`](../workflows/) for the guides these examples
+   accompany.
+2. Phase 3 structured JSON fixtures for the executable validation substrate (below) — used by the
+   automated test suite, not narrative examples.
 
 ## Fixtures
 
