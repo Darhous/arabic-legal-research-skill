@@ -8,6 +8,15 @@ from legal_research_skill.enums import Decision
 from legal_research_skill.errors import ArtifactError
 from legal_research_skill.models import ResearchState, ValidationReport, stable_hash
 
+# Deliberately fixed, not datetime.now(): two independent CLI invocations of
+# the same input must produce byte-identical DOCX output and manifests (see
+# tests/acceptance/test_phase5_acceptance.py::test_reproducibility_...), and
+# render_config_digest hashes this value as part of the render config. This
+# is a build-epoch constant, not a real wall-clock timestamp -- callers that
+# want a document to carry a genuine generation time must pass their own
+# value explicitly via RenderConfig(created_at=...).
+DEFAULT_BUILD_EPOCH = "2026-07-02T00:00:00Z"
+
 
 @dataclass(frozen=True, slots=True)
 class RenderConfig:
@@ -26,7 +35,11 @@ class RenderConfig:
     language: str = "ar-EG"
     toc_heading: str = "فهرس المحتويات"
     author_fallback: str = "غير محدد في حالة البحث"
-    created_at: str = "2026-07-02T00:00:00Z"
+    # A fixed build-epoch constant (see DEFAULT_BUILD_EPOCH above), not a
+    # real generation timestamp -- do not treat this default as evidence of
+    # when a document was actually produced. Pass an explicit value here for
+    # a genuine wall-clock generation time.
+    created_at: str = DEFAULT_BUILD_EPOCH
     update_fields_on_open: bool = True
     footnote_numbering: str = "sequential"
     include_page_numbers: bool = True

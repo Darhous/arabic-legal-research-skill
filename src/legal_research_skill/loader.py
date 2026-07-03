@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from legal_research_skill.constants import SUPPORTED_RESEARCH_SCHEMA_VERSION
 from legal_research_skill.errors import InputError, SchemaValidationError
 from legal_research_skill.models import ResearchState
 from legal_research_skill.schema_validation import research_state_errors
@@ -35,12 +34,17 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def load_state(path: Path) -> ResearchState:
+    """Read, schema-validate (including schema_version), and wrap a research state file.
+
+    Schema compliance -- including the supported ``schema_version`` -- is
+    enforced exclusively by the JSON Schema's ``const`` constraint on that
+    field, checked here via research_state_errors(). This is the single,
+    authoritative version-validation path in the codebase (also used by
+    SchemaIntegrityValidator/run_pipeline for the CLI's structured-report
+    flow); do not reintroduce a second, hand-rolled version comparison here.
+    """
     data = read_json(path)
     errors = research_state_errors(data)
     if errors:
         raise SchemaValidationError("; ".join(errors))
-    if data.get("schema_version") != SUPPORTED_RESEARCH_SCHEMA_VERSION:
-        raise SchemaValidationError(
-            f"Unsupported schema_version: {data.get('schema_version')!r}; expected {SUPPORTED_RESEARCH_SCHEMA_VERSION}."
-        )
     return ResearchState(data)

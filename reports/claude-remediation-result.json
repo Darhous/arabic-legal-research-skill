@@ -1,0 +1,233 @@
+{
+  "starting_commit": "cef6c45375c4d45ca0b2f3e8b18474edf01f5ffc",
+  "remediation_commit": null,
+  "remediation_commit_note": "This value is intentionally null: the commit that includes this file cannot contain its own resulting hash. Resolve via 'git rev-parse HEAD' immediately after the remediation commit described in CLAUDE_REMEDIATION_IMPLEMENTATION_REPORT.md is created.",
+  "findings": [
+    {
+      "id": "CLI-1",
+      "severity": "Critical",
+      "original_finding": "render-docx --output equal to --input silently overwrote the input file with binary DOCX content, exit code 0.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "_safe_output_path only confined the resolved path to cwd and blocked reserved device names; it never compared resolved output to resolved input.",
+      "files_changed": [
+        "src/legal_research_skill/paths.py",
+        "src/legal_research_skill/cli.py",
+        "src/legal_research_skill/word/finalization.py"
+      ],
+      "fix": "Added paths.is_same_file_target() (resolved-path equality + os.path.samefile), wired into render-docx, validate --output, finalize-word, and build-artifact's derived docx path.",
+      "regression_tests": ["tests/regression/test_output_path_safety.py", "tests/unit/test_paths.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DOCX-1",
+      "severity": "High",
+      "original_finding": "Footnote-free documents always failed structural validation because separator/continuation footnotes never carry w:bidi and the check was unconditional.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "_footnote_findings required w:bidi anywhere in footnotes.xml, not scoped to real (non-reserved-ID) footnotes.",
+      "files_changed": ["src/legal_research_skill/docx/validation.py"],
+      "fix": "RTL check now scoped to non-reserved footnote IDs only; also added detection of footnote references with a missing footnotes.xml part (footnotes_part_missing), a related gap found during remediation.",
+      "regression_tests": ["tests/regression/test_docx_footnote_validation.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "WORD-1",
+      "severity": "High",
+      "original_finding": "If DispatchEx never returns, word_pid is never captured, so timeout cleanup cannot identify/terminate the orphaned WINWORD.EXE process.",
+      "reproduction_status": "CONFIRMED_BY_STATIC_ANALYSIS",
+      "root_cause": "Pre-dispatch process snapshot was only held in worker memory, never persisted, so it was lost if the worker was killed mid-hang.",
+      "files_changed": [
+        "src/legal_research_skill/word/processes.py",
+        "src/legal_research_skill/word/worker.py",
+        "src/legal_research_skill/word/runner.py"
+      ],
+      "fix": "Pre-dispatch winword.exe PID snapshot and worker start time are now persisted to diagnostics before DispatchEx is called. On timeout without a captured word_pid, the parent diffs a fresh snapshot and only terminates a single, executable-verified, time-plausible new process. Multiple simultaneous candidates are left running rather than guessed at.",
+      "regression_tests": ["tests/regression/test_word_orphan_process_recovery.py", "tests/unit/test_processes_real_windows_api.py"],
+      "residual_risk": "If multiple new winword.exe processes appear in the same narrow window, none are auto-terminated (ownership cannot be disambiguated); this is a deliberate safety trade-off, not a bug.",
+      "final_status": "MITIGATED"
+    },
+    {
+      "id": "ARCH-1",
+      "severity": "High",
+      "original_finding": "loader.load_state()'s dedicated schema_version error path is dead code; the real pipeline relies solely on the generic JSON Schema const check.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "The manual version comparison in load_state() was unreachable: research_state_errors() already raises for any schema violation, including a bad schema_version, before that line executes.",
+      "files_changed": ["src/legal_research_skill/loader.py", "src/legal_research_skill/constants.py"],
+      "fix": "Removed the dead, provably-unreachable manual check; load_state() now relies exclusively on the schema-based check, matching the pipeline's already-tested approach. Removed the now-fully-unused SUPPORTED_RESEARCH_SCHEMA_VERSION constant.",
+      "regression_tests": ["tests/regression/test_schema_version_validation.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "ARCH-2",
+      "severity": "Medium",
+      "original_finding": "Implicit schema-directory override activates purely on path existence, with no integrity check, in an installed-package layout where the ancestor path is unrelated to the project.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "SCHEMAS_DIR selection walked two parents above the package looking for a schemas/ directory with no verification the ancestor was actually this project's checkout.",
+      "files_changed": ["src/legal_research_skill/constants.py"],
+      "fix": "resolve_schemas_dir() now defaults to the packaged schema directory unconditionally; overriding requires an explicit LEGAL_RESEARCH_SKILL_USE_WORKTREE_SCHEMAS=1 environment variable plus a pyproject.toml sanity check on the candidate root.",
+      "regression_tests": ["tests/regression/test_schema_directory_override.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "ARCH-3",
+      "severity": "Medium",
+      "original_finding": "generated_at/created_at defaults to a hardcoded literal presented as if it were a real generation timestamp.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "RenderConfig.created_at's fixed default was undocumented as such.",
+      "files_changed": [
+        "src/legal_research_skill/docx/render_model.py",
+        "src/legal_research_skill/artifacts/manifest.py",
+        "src/legal_research_skill/docx/renderer.py"
+      ],
+      "fix": "Documentation-only: named the constant DEFAULT_BUILD_EPOCH and added docstrings/comments clarifying it is a fixed build epoch, not a real timestamp, at every point it is consumed. A behavioral fix (real-time default) was attempted and reverted because it broke the project's deliberately-tested byte-reproducibility guarantee across independent CLI invocations.",
+      "regression_tests": ["tests/regression/test_timestamp_labeling.py"],
+      "residual_risk": "The value still defaults to a fixed epoch rather than real time in production; this is intentional (reproducibility over real-time accuracy) and now clearly documented rather than silently misleading.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DOCX-2",
+      "severity": "Medium",
+      "original_finding": "Zip-bomb compression-ratio heuristic false-positives on legitimate long, highly-repetitive text.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "Pure ratio threshold with no minimum size floor.",
+      "files_changed": ["src/legal_research_skill/docx/validation.py", "tests/unit/test_docx_validation_edges.py"],
+      "fix": "Combined ratio threshold with a compressed-size floor before evaluating ratio, plus independent per-part and total-uncompressed-size caps.",
+      "regression_tests": ["tests/regression/test_zip_bomb_thresholds.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "REL-1",
+      "severity": "Medium",
+      "original_finding": "No CI workflow builds or publishes release assets; the published v0.3.0 wheel has no CI-verifiable provenance.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "ci.yml only triggers on push to main / PR; no tag-triggered or publishing workflow existed.",
+      "files_changed": [".github/workflows/release.yml"],
+      "fix": "Added a tag-triggered workflow that builds, tests, hashes, and uploads the wheel as a CI artifact. Does not auto-create a GitHub Release or publish to PyPI, per this task's constraints.",
+      "regression_tests": [],
+      "residual_risk": "Does not retroactively provide provenance for the already-published v0.3.0 asset; only benefits future tags.",
+      "final_status": "MITIGATED"
+    },
+    {
+      "id": "REL-2",
+      "severity": "Medium",
+      "original_finding": "Wheel builds are not byte-reproducible across checkout environments (CRLF/LF variance, no .gitattributes).",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "core.autocrlf=true with no .gitattributes made checkout line-ending behavior environment-dependent.",
+      "files_changed": [".gitattributes", "examples/fixtures/valid/approved-plan-locked.json"],
+      "fix": "Added .gitattributes pinning tracked text files to eol=lf. While verifying this, found and fixed a live CRLF-on-disk inconsistency in one fixture (working tree bytes differed from the committed LF blob but were masked as 'clean' by autocrlf-aware git status); corrected to match the committed blob exactly (verified via git hash-object equality -- zero content change).",
+      "regression_tests": ["tests/regression/test_line_ending_policy.py"],
+      "residual_risk": "Cannot retroactively make the already-published v0.3.0 wheel byte-reproducible; only prevents recurrence for future tags.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "CLI-2",
+      "severity": "Low",
+      "original_finding": "No output file-extension validation on render-docx.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "No suffix check existed on the render-docx output path.",
+      "files_changed": ["src/legal_research_skill/paths.py", "src/legal_research_skill/cli.py", "src/legal_research_skill/word/finalization.py"],
+      "fix": "Added case-insensitive .docx extension requirement and a directory-vs-file guard to render-docx and finalize-word output paths.",
+      "regression_tests": ["tests/regression/test_output_extension_validation.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "SEC-1",
+      "severity": "Low",
+      "original_finding": "GitHub Actions pinned to mutable version tags, not commit SHAs.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "actions/checkout@v4 and actions/setup-python@v5 used tag references.",
+      "files_changed": [".github/workflows/ci.yml", ".github/workflows/release.yml"],
+      "fix": "Pinned both actions to commit SHAs resolved via 'gh api repos/actions/<name>/git/refs/tags/<tag>', with version comments retained for readability.",
+      "regression_tests": [],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "SEC-2",
+      "severity": "Low",
+      "original_finding": "Runtime/dev dependencies had version floors but no ceilings.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "pyproject.toml declared only >= constraints.",
+      "files_changed": ["pyproject.toml"],
+      "fix": "Added major-version ceilings (jsonschema<5, pytest<10, pytest-cov<8, ruff<1) above the currently-installed versions.",
+      "regression_tests": [],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DEP-1",
+      "severity": "Low",
+      "original_finding": "Missing required dependency causes a raw traceback instead of a clean CLI error.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "legal_research_skill.cli (and its jsonschema dependency) was imported unconditionally at the top of __main__.py, before any error handling existed.",
+      "files_changed": ["src/legal_research_skill/__main__.py", "pyproject.toml"],
+      "fix": "Deferred and guarded the import inside a new __main__.run() function; retargeted both python -m and the console-script entry point to it.",
+      "regression_tests": ["tests/regression/test_missing_dependency_error.py"],
+      "residual_risk": "None identified.",
+      "final_status": "FIXED"
+    },
+    {
+      "id": "LIC-1",
+      "severity": "Low",
+      "original_finding": "No LICENSE file in a public repository.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "No license has ever been added to the repository.",
+      "files_changed": ["README.md"],
+      "fix": "Strengthened the existing disclosure with an explicit statement that no reuse rights are granted by default without a LICENSE file. No LICENSE was created, per this task's explicit instruction not to choose a license on the owner's behalf.",
+      "regression_tests": [],
+      "residual_risk": "The underlying gap remains: the project has no license and therefore grants no reuse rights by default.",
+      "final_status": "DEFERRED"
+    },
+    {
+      "id": "ARCH-4",
+      "severity": "Low",
+      "original_finding": "Broad except Exception usage in word/ COM call sites, defensible but under-documented.",
+      "reproduction_status": "CONFIRMED",
+      "root_cause": "N/A (documentation gap, not a functional defect).",
+      "files_changed": ["src/legal_research_skill/word/worker.py"],
+      "fix": "Added an explanatory comment to the two ScreenUpdating/AutomationSecurity best-effort suppress(Exception) sites clarifying the intentional non-fatal semantics.",
+      "regression_tests": [],
+      "residual_risk": "None; remaining except Exception sites were already judged structurally necessary in the original audit and were left unchanged.",
+      "final_status": "MITIGATED"
+    }
+  ],
+  "tests": {
+    "passed": 233,
+    "failed": 0,
+    "skipped": 1,
+    "coverage_percent": 96.12
+  },
+  "packaging": {
+    "wheel_built_from_fixed_tree": true,
+    "version_unchanged": "0.3.0",
+    "entry_point": "legal_research_skill.__main__:run",
+    "no_stray_artifacts_in_wheel": true,
+    "installed_wheel_smoke_passed": true,
+    "installed_wheel_render_sha256": "4d410ebbde3bfa95bb3763ae3c18846869a101c489e07aa000a69de701ba7b33",
+    "matches_pre_remediation_baseline_hash": true,
+    "missing_dependency_produces_clean_error": true
+  },
+  "clean_worktree": {
+    "performed": true,
+    "compileall_pass": true,
+    "ruff_format_pass": true,
+    "ruff_check_pass": true,
+    "pytest_pass": true,
+    "wheel_build_pass": true,
+    "installed_wheel_smoke_pass": true,
+    "readme_integrity_pass": true,
+    "workflow_yaml_valid": true
+  },
+  "release_recommendation": "v0.3.1_REQUIRED",
+  "remaining_risks": [
+    "WORD-1: ambiguous multi-process detection intentionally leaves orphan(s) running rather than guessing ownership.",
+    "REL-1/REL-2: cannot retroactively provide provenance or byte-reproducibility for the already-published v0.3.0 asset; only future tags benefit.",
+    "LIC-1: no LICENSE file exists; project remains all-rights-reserved by default, unresolved by design in this task."
+  ],
+  "verdict": "POST-REMEDIATION AUDIT: PASS WITH LIMITATIONS -- PROJECT READY FOR v0.3.1 WITH DOCUMENTED WORD LIMITATION"
+}

@@ -31,6 +31,14 @@ class ArtifactManifest:
     word_finalized_docx_digest: str | None
     word_evidence: dict[str, Any]
     generated_at: str
+    """Sourced from RenderConfig.created_at (see docx/render_model.py).
+
+    Defaults to a fixed build-epoch constant, not a real wall-clock
+    timestamp, so that independent CLI invocations of the same input
+    produce byte-identical manifests and DOCX output. Do not treat this
+    field as evidence of when an artifact was actually produced unless the
+    caller explicitly supplied a real timestamp via RenderConfig.
+    """
     validations: tuple[dict[str, Any], ...]
     allowed_claims: tuple[str, ...]
     prohibited_claims: tuple[str, ...]

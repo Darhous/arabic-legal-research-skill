@@ -22,6 +22,17 @@ BLOCKED_SUFFIXES = (".bin", ".exe", ".dll", ".vba", ".vbs", ".js", ".ole")
 MAX_PARTS = 512
 MAX_DOCX_BYTES = 50 * 1024 * 1024
 MAX_COMPRESSION_RATIO = 100
+# A high compression ratio alone is not a meaningful zip-bomb signal for
+# small parts: legitimate, highly repetitive text (long Arabic quotations,
+# numbering tables, etc.) routinely compresses at well over 100:1 while
+# remaining a handful of kilobytes on disk. The ratio check below only
+# applies once the compressed payload is large enough that decompressing it
+# would actually matter memory-wise; combined with the per-part and
+# total-uncompressed-size caps, a genuine zip bomb is still caught even if
+# it is engineered to keep any single part's ratio under the threshold.
+MIN_COMPRESSED_BYTES_FOR_RATIO_CHECK = 4096
+MAX_PART_UNCOMPRESSED_BYTES = 200 * 1024 * 1024
+MAX_TOTAL_UNCOMPRESSED_BYTES = 500 * 1024 * 1024
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,7 +152,8 @@ def _xml_findings(archive: ZipFile) -> list[DocxFinding]:
     styles = _parse(archive, "word/styles.xml", findings)
     rels = _parse(archive, "word/_rels/document.xml.rels", findings)
     footer = _parse(archive, "word/footer1.xml", findings) if "word/footer1.xml" in archive.namelist() else None
-    footnotes = _parse(archive, "word/footnotes.xml", findings) if "word/footnotes.xml" in archive.namelist() else None
+    footnotes_part_present = "word/footnotes.xml" in archive.namelist()
+    footnotes = _parse(archive, "word/footnotes.xml", findings) if footnotes_part_present else None
     if document is None or styles is None or rels is None:
         return findings
     findings.extend(_relationship_findings(rels))
@@ -149,7 +161,20 @@ def _xml_findings(archive: ZipFile) -> list[DocxFinding]:
     findings.extend(_style_findings(styles))
     if footnotes is not None:
         findings.extend(_footnote_findings(document, footnotes))
+    elif not footnotes_part_present and _has_footnote_references(document):
+        findings.append(
+            DocxFinding(
+                "footnotes_part_missing",
+                "fail",
+                "Document references footnotes but the footnotes part is missing.",
+                {},
+            )
+        )
     return findings
+
+
+def _has_footnote_references(document: ET.Element) -> bool:
+    return document.find(f".//{W}footnoteReference") is not None
 
 
 def _parse(archive: ZipFile, name: str, findings: list[DocxFinding]) -> ET.Element | None:
@@ -185,11 +210,25 @@ def _relationship_findings(rels: ET.Element) -> list[DocxFinding]:
 
 
 def _compression_findings(archive: ZipFile) -> list[DocxFinding]:
-    findings = []
+    findings: list[DocxFinding] = []
+    total_uncompressed = 0
     for info in archive.infolist():
         if info.file_size <= 0:
             continue
+        total_uncompressed += info.file_size
+        if info.file_size > MAX_PART_UNCOMPRESSED_BYTES:
+            findings.append(
+                DocxFinding(
+                    "oversized_part",
+                    "fail",
+                    "DOCX part exceeds the maximum allowed uncompressed size.",
+                    {"part": info.filename, "uncompressed_bytes": info.file_size},
+                )
+            )
+            continue
         compressed = max(info.compress_size, 1)
+        if compressed < MIN_COMPRESSED_BYTES_FOR_RATIO_CHECK:
+            continue
         ratio = info.file_size / compressed
         if ratio > MAX_COMPRESSION_RATIO:
             findings.append(
@@ -197,9 +236,18 @@ def _compression_findings(archive: ZipFile) -> list[DocxFinding]:
                     "suspicious_compression_ratio",
                     "fail",
                     "DOCX part has a suspicious compression ratio.",
-                    {"part": info.filename, "ratio": round(ratio, 3)},
+                    {"part": info.filename, "ratio": round(ratio, 3), "compressed_bytes": info.compress_size},
                 )
             )
+    if total_uncompressed > MAX_TOTAL_UNCOMPRESSED_BYTES:
+        findings.append(
+            DocxFinding(
+                "oversized_uncompressed_total",
+                "fail",
+                "DOCX total uncompressed content exceeds the configured limit.",
+                {"total_uncompressed_bytes": total_uncompressed},
+            )
+        )
     return findings
 
 
@@ -234,10 +282,27 @@ def _style_findings(styles: ET.Element) -> list[DocxFinding]:
     return findings
 
 
+RESERVED_FOOTNOTE_IDS = {"-1", "0"}
+
+
 def _footnote_findings(document: ET.Element, footnotes: ET.Element) -> list[DocxFinding]:
     refs = {node.attrib[f"{W}id"] for node in document.findall(f".//{W}footnoteReference") if f"{W}id" in node.attrib}
-    ids = [node.attrib[f"{W}id"] for node in footnotes.findall(f"{W}footnote") if f"{W}id" in node.attrib]
-    regular_ids = {item for item in ids if item not in {"-1", "0"}}
+    ids: list[str] = []
+    elements: dict[str, ET.Element] = {}
+    for node in footnotes.findall(f"{W}footnote"):
+        footnote_id = node.attrib.get(f"{W}id")
+        if footnote_id is None:
+            continue
+        ids.append(footnote_id)
+        elements[footnote_id] = node
+    # Every generated footnotes.xml part carries the two OOXML-mandatory
+    # separator/continuationSeparator entries (ids "-1" and "0") even when
+    # the document uses no real footnotes at all; those synthetic entries
+    # never carry RTL paragraph properties and must not be treated as user
+    # footnotes for linkage or RTL-structure checks (duplicate-ID detection
+    # below still covers all ids, reserved or not, since a duplicate "-1"
+    # separator would itself be a malformed package).
+    regular_ids = {item for item in ids if item not in RESERVED_FOOTNOTE_IDS}
     findings = []
     if len(ids) != len(set(ids)):
         findings.append(DocxFinding("duplicate_footnote_id", "fail", "Footnote IDs must be unique.", {}))
@@ -249,8 +314,17 @@ def _footnote_findings(document: ET.Element, footnotes: ET.Element) -> list[Docx
         )
     if orphan:
         findings.append(DocxFinding("orphan_footnotes", "fail", "Footnote bodies lack references.", {"ids": orphan}))
-    if footnotes.find(f".//{W}bidi") is None:
-        findings.append(
-            DocxFinding("footnote_rtl_missing", "fail", "Footnote RTL paragraph properties are missing.", {})
+    if regular_ids:
+        missing_rtl = sorted(
+            footnote_id for footnote_id in regular_ids if elements[footnote_id].find(f".//{W}bidi") is None
         )
+        if missing_rtl:
+            findings.append(
+                DocxFinding(
+                    "footnote_rtl_missing",
+                    "fail",
+                    "Footnote RTL paragraph properties are missing.",
+                    {"ids": missing_rtl},
+                )
+            )
     return findings

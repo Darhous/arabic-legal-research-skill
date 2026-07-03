@@ -9,16 +9,8 @@ from typing import Any
 
 from legal_research_skill.docx.validation import validate_docx
 from legal_research_skill.errors import ArtifactError
+from legal_research_skill.paths import WINDOWS_RESERVED_NAMES, has_extension, is_same_file_target
 from legal_research_skill.word.runner import DEFAULT_WORD_TIMEOUT_SECONDS, run_word_worker, validate_timeout
-
-WINDOWS_RESERVED_NAMES = {
-    "CON",
-    "PRN",
-    "AUX",
-    "NUL",
-    *(f"COM{index}" for index in range(1, 10)),
-    *(f"LPT{index}" for index in range(1, 10)),
-}
 
 
 @dataclass(frozen=True, slots=True)
@@ -139,9 +131,11 @@ def _validate_paths(input_path: Path, output_path: Path) -> tuple[Path, Path]:
     output_resolved = output_path.resolve()
     if not input_resolved.exists() or not input_resolved.is_file():
         raise ArtifactError("Input DOCX does not exist.")
-    if input_resolved.suffix.lower() != ".docx" or output_resolved.suffix.lower() != ".docx":
+    if not has_extension(input_resolved, ".docx") or not has_extension(output_resolved, ".docx"):
         raise ArtifactError("Word finalization input and output must use the .docx extension.")
-    if output_resolved == input_resolved:
+    if output_resolved.is_dir():
+        raise ArtifactError("Word finalization output path is a directory, not a file.")
+    if is_same_file_target(input_path, output_path):
         raise ArtifactError("Word finalization output must not overwrite the input file.")
     if root not in input_resolved.parents and input_resolved != root:
         raise ArtifactError("Word finalization input path must stay within the current working directory.")

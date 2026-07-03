@@ -1,0 +1,250 @@
+{
+  "audit_type": "independent",
+  "repository": "https://github.com/Darhous/arabic-legal-research-skill",
+  "main_commit": "cef6c45375c4d45ca0b2f3e8b18474edf01f5ffc",
+  "release_tag": "v0.3.0",
+  "release_commit": "e50da461ca03b71c4ae669c857b2def680e45f70",
+  "verdict": "CONDITIONAL_PASS_REQUIRES_CORRECTIONS",
+  "tests": {
+    "main": {
+      "passed": 141,
+      "skipped": 1,
+      "failed": 0,
+      "framework": "pytest",
+      "python_version": "3.12.10",
+      "executed_locally": true
+    },
+    "tag": {
+      "passed": null,
+      "skipped": null,
+      "failed": null,
+      "note": "Not independently re-executed as a separate run; git diff between release_commit and main_commit shows zero changes under src/ or tests/, so main's test results are representative of the tag's test surface."
+    }
+  },
+  "coverage": {
+    "main": 95.03,
+    "tag": null
+  },
+  "packaging": {
+    "main": {
+      "build_success_with_default_env": false,
+      "build_success_after_installing_setuptools_wheel": true,
+      "wheel_sha256": "3fc23f32b511a02ccd3779f14ce4e4f0fff16d99f810211c1e9654a793ace8be",
+      "note": "Fails with 'Cannot import setuptools.build_meta' unless setuptools/wheel are explicitly installed first, matching the CI root cause."
+    },
+    "tag": {
+      "build_success_with_default_env": false,
+      "build_success_after_installing_setuptools_wheel": true,
+      "wheel_sha256": "3f50bd96aa8ee7354d9ef6a601be399a581d65b0e2742b633846e8f5c85774b1",
+      "built_in_isolated_git_worktree": true
+    },
+    "content_equivalence": {
+      "main_vs_tag_source_identical_after_line_ending_normalization": true,
+      "main_vs_release_asset_source_identical_after_line_ending_normalization": true,
+      "root_cause_of_hash_divergence": "core.autocrlf=true with no .gitattributes causes CRLF vs LF variance across checkout environments; no functional content divergence."
+    }
+  },
+  "ci": {
+    "main": {
+      "run_id": "28622162540",
+      "conclusion": "success",
+      "head_sha": "cef6c45375c4d45ca0b2f3e8b18474edf01f5ffc",
+      "failed_step": null
+    },
+    "release_commit": {
+      "run_id": "28620379550",
+      "conclusion": "failure",
+      "head_sha": "e50da461ca03b71c4ae669c857b2def680e45f70",
+      "failed_step": "Build wheel",
+      "root_cause": "Missing explicit setuptools/wheel install before 'python -m build --no-isolation'; fixed on main by adding 'pip install --upgrade setuptools wheel build' before the editable install."
+    }
+  },
+  "word_gate": {
+    "status_in_this_environment": "BLOCKED_AT_DISPATCH",
+    "claim_matches_observation": true,
+    "orphan_process_risk_confirmed": true,
+    "orphan_process_risk_detail": "If DispatchEx never returns, word_pid is never captured, so timeout-triggered cleanup cannot identify/terminate the spawned WINWORD.EXE process; the worker subprocess itself is reliably killed.",
+    "pid_reuse_protection": "confirmed_robust",
+    "dispatch_mode": "DispatchEx_only_no_bare_Dispatch_found"
+  },
+  "release_integrity": {
+    "published_asset_filename": "arabic_legal_research_skill-0.3.0-py3-none-any.whl",
+    "published_asset_sha256": "5d7a67cd936bacd770b15f6e5cb915f64d830d0834841ff2641f386758bfc246",
+    "matches_github_recorded_digest": true,
+    "matches_claimed_hash": true,
+    "ci_builds_release_assets": false,
+    "release_publish_workflow_exists": false,
+    "build_provenance_ci_verifiable": false,
+    "source_content_provenance_verifiable": true,
+    "main_tag_divergence_classification": "expected_post_release_ci_and_docs_commit_no_source_drift",
+    "local_only_tag_found": "checkpoint/phase5-conditional-accepted",
+    "license_file_present": false,
+    "license_disclosed_in_readme": true
+  },
+  "findings": [
+    {
+      "id": "CLI-1",
+      "title": "render-docx silently overwrites input file when --output equals --input",
+      "severity": "Critical",
+      "category": "functional/data-loss",
+      "location": "src/legal_research_skill/cli.py (_safe_output_path)",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DOCX-1",
+      "title": "Footnote-free valid documents incorrectly fail structural validation",
+      "severity": "High",
+      "category": "correctness",
+      "location": "src/legal_research_skill/docx/validation.py (_footnote_findings)",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "WORD-1",
+      "title": "Orphaned WINWORD.EXE possible if DispatchEx hangs before returning",
+      "severity": "High",
+      "category": "reliability",
+      "location": "src/legal_research_skill/word/worker.py, src/legal_research_skill/word/processes.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": false,
+      "final_status": "MITIGATED"
+    },
+    {
+      "id": "ARCH-1",
+      "title": "Dead schema-version-mismatch error path (load_state never called by real pipeline)",
+      "severity": "High",
+      "category": "maintainability",
+      "location": "src/legal_research_skill/loader.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": false,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "ARCH-2",
+      "title": "Implicit schema-directory override with no integrity check",
+      "severity": "Medium",
+      "category": "supply_chain_latent_risk",
+      "location": "src/legal_research_skill/constants.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": false,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "ARCH-3",
+      "title": "generated_at manifest field is a hardcoded constant mislabeled as a real timestamp",
+      "severity": "Medium",
+      "category": "correctness_of_metadata",
+      "location": "src/legal_research_skill/docx/render_model.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DOCX-2",
+      "title": "Zip-bomb compression-ratio heuristic false-positives on legitimate long Arabic text",
+      "severity": "Medium",
+      "category": "correctness/usability",
+      "location": "src/legal_research_skill/docx/validation.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "REL-1",
+      "title": "No CI workflow builds or publishes release assets; published wheel has no CI-verifiable provenance",
+      "severity": "Medium",
+      "category": "release_integrity",
+      "location": ".github/workflows/ci.yml",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "MITIGATED"
+    },
+    {
+      "id": "REL-2",
+      "title": "Wheel builds are not byte-reproducible across checkout environments (CRLF/LF variance, no .gitattributes)",
+      "severity": "Medium",
+      "category": "release_integrity",
+      "location": "repository root (missing .gitattributes)",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "CLI-2",
+      "title": "No output file-extension validation on render-docx",
+      "severity": "Low",
+      "category": "usability",
+      "location": "src/legal_research_skill/cli.py",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "SEC-1",
+      "title": "GitHub Actions pinned to mutable version tags, not commit SHAs",
+      "severity": "Low",
+      "category": "supply_chain",
+      "location": ".github/workflows/ci.yml",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": false,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "SEC-2",
+      "title": "Dependencies floor-pinned only, no upper bound",
+      "severity": "Low",
+      "category": "supply_chain",
+      "location": "pyproject.toml",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": false,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "DEP-1",
+      "title": "Missing required dependency causes raw traceback instead of clean CLI error",
+      "severity": "Low",
+      "category": "robustness",
+      "location": "src/legal_research_skill/schema_validation.py (import site)",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "FIXED"
+    },
+    {
+      "id": "LIC-1",
+      "title": "No LICENSE file in a public repository",
+      "severity": "Low",
+      "category": "legal/distribution",
+      "location": "repository root",
+      "confidence": "CONFIRMED",
+      "reproduced_directly": true,
+      "final_status": "DEFERRED"
+    }
+  ],
+  "required_actions": [
+    "Fix CLI-1: reject or warn when --output resolves to the same path as --input before writing.",
+    "Fix DOCX-1: do not require w:bidi on synthetic separator footnotes when no real footnotes exist.",
+    "Fix WORD-1: snapshot processes before DispatchEx and diff post-timeout to find orphaned winword.exe even when word_pid was never captured.",
+    "Publish a v0.3.1 patch release once CLI-1, DOCX-1, and WORD-1 are fixed.",
+    "Add a tag-triggered CI workflow that builds and publishes release assets, so future releases have CI-verifiable provenance.",
+    "Add a .gitattributes file pinning text sources to LF to make wheel builds byte-reproducible.",
+    "Do not force-move the v0.3.0 tag or rewrite published history.",
+    "Do not delete the v0.3.0 GitHub Release; supersede it with v0.3.1 instead."
+  ],
+  "limitations": [
+    "Real Microsoft Word COM automation was not executed; Word-gate findings are based on static code review plus the project's own diagnostics evidence of a real DispatchEx hang.",
+    "Tag-specific test/coverage numbers were not independently re-executed as a separate pytest run; relied on a verified zero-diff in src/tests between the release commit and main.",
+    "No automated fuzzing, pip-audit, bandit, or semgrep scans were run; security review was manual grep-and-read only.",
+    "Symlink-escape scenarios were reasoned about via code tracing but not physically exploit-tested.",
+    "Exhaustive manual mutation testing (as suggested in the audit brief) was not performed beyond the adversarial DOCX/CLI fixtures actually exercised."
+  ],
+  "remediation": {
+    "performed": true,
+    "report": "CLAUDE_REMEDIATION_IMPLEMENTATION_REPORT.md",
+    "acceptance_report": "CLAUDE_POST_REMEDIATION_ACCEPTANCE_REPORT.md",
+    "result_json": "reports/claude-remediation-result.json",
+    "summary": "11 FIXED, 2 MITIGATED (WORD-1, REL-1), 1 DEFERRED (LIC-1, no license created on owner behalf)."
+  }
+}

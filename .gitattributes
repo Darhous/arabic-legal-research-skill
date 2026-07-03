@@ -1,0 +1,29 @@
+# Normalize text file line endings to LF on checkout, regardless of the
+# checking-out machine's core.autocrlf setting. Without this, a fresh
+# clone/worktree can produce CRLF-terminated source files where an
+# existing working copy has LF, changing wheel/package build hashes
+# without changing content (see release-integrity remediation notes).
+* text=auto eol=lf
+
+*.py text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+*.svg text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Explicitly binary, never line-ending-normalized.
+*.docx binary
+*.whl binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.pdf binary

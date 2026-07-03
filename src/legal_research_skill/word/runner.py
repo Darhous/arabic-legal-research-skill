@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from legal_research_skill.word.processes import terminate_owned_process
+from legal_research_skill.word.processes import find_new_owned_word_processes, terminate_owned_process
 
 MIN_WORD_TIMEOUT_SECONDS = 5
 MAX_WORD_TIMEOUT_SECONDS = 300
@@ -67,7 +67,29 @@ def run_word_worker(input_path: Path, working_path: Path, *, timeout_seconds: in
             worker_cleanup = "worker_killed"
         word_pid = diagnostics.get("word_pid")
         ownership_verified = bool(diagnostics.get("word_pid_ownership_verified"))
-        word_cleanup = terminate_owned_process(word_pid, ownership_verified)
+        recovery_candidates: list[dict[str, Any]] = []
+        if word_pid is not None:
+            word_cleanup = terminate_owned_process(word_pid, ownership_verified)
+        else:
+            # DispatchEx itself never returned (or never got far enough to
+            # record word_pid before the timeout fired), so the normal
+            # Hwnd-based identification path in the worker never ran. Fall
+            # back to diffing the pre-dispatch winword.exe snapshot the
+            # worker persisted to diagnostics against a fresh post-timeout
+            # snapshot. Only a single, time-plausible, executable-verified
+            # new winword.exe process is ever terminated; anything
+            # ambiguous is reported but left running.
+            before_pids = set(diagnostics.get("before_dispatch_winword_pids") or ())
+            worker_started_at = diagnostics.get("worker_started_at")
+            candidates = find_new_owned_word_processes(before_pids, not_before=worker_started_at)
+            recovery_candidates = [identity.to_dict() for identity in candidates]
+            cleanups = [terminate_owned_process(identity.pid, identity.ownership_verified) for identity in candidates]
+            if not cleanups:
+                word_cleanup = {"status": "owned_word_process_not_found", "pid": None, "running_after": None}
+            elif len(cleanups) == 1:
+                word_cleanup = cleanups[0]
+            else:
+                word_cleanup = {"status": "multiple_candidates_left_running", "candidates": cleanups}
         return {
             "status": "TIMEOUT",
             "input_path": str(input_path),
@@ -89,6 +111,7 @@ def run_word_worker(input_path: Path, working_path: Path, *, timeout_seconds: in
                 "isolated_worker": True,
                 "worker_cleanup": worker_cleanup,
                 "word_process_cleanup": word_cleanup,
+                "word_process_recovery_candidates": recovery_candidates,
             },
         }
     result = _parse_worker_result(stdout, stderr, process.returncode, started, timeout_seconds, process.pid, input_path)

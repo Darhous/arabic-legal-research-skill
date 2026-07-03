@@ -103,9 +103,13 @@ def test_relationship_duplicate_ids_are_reported():
 
 
 def test_suspicious_compression_ratio_is_reported(tmp_path):
+    # Payload large enough that its compressed size clears
+    # MIN_COMPRESSED_BYTES_FOR_RATIO_CHECK (small highly-repetitive parts are
+    # legitimate and must not be flagged -- see the DOCX-1/ZIP-bomb
+    # remediation regression tests for that behavior).
     path = tmp_path / "compressed.docx"
     with ZipFile(path, "w", compression=ZIP_DEFLATED) as archive:
-        archive.writestr("[Content_Types].xml", "a" * 5000)
+        archive.writestr("[Content_Types].xml", "a" * 5_000_000)
     report = validate_docx(path)
     assert any(finding.code == "suspicious_compression_ratio" for finding in report.findings)
 

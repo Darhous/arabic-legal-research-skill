@@ -14,6 +14,9 @@ SYNCHRONIZE = 0x00100000
 STILL_ACTIVE = 259
 WAIT_OBJECT_0 = 0
 WAIT_TIMEOUT = 258
+WINWORD_EXECUTABLE_NAME = "winword.exe"
+WINDOWS_EPOCH_OFFSET_SECONDS = 11644473600
+CREATION_TIME_SLACK_SECONDS = 1.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,7 +68,7 @@ def identify_word_process(pid: int | None, before_snapshot: dict[int, dict[str, 
     executable_path = _query_process_image(pid) if is_windows() else None
     executable_name = Path(executable_path).name if executable_path else None
     existed_before = pid in before_snapshot if before_snapshot else None
-    expected_executable = executable_name is not None and executable_name.casefold() == "winword.exe"
+    expected_executable = executable_name is not None and executable_name.casefold() == WINWORD_EXECUTABLE_NAME
     verified = bool(expected_executable and existed_before is False)
     error = None if verified else "Word PID ownership could not be fully verified."
     return ProcessIdentity(
@@ -126,6 +129,96 @@ def terminate_owned_process(pid: int | None, ownership_verified: bool) -> dict[s
         return {"status": status, "pid": pid, "running_before": before, "running_after": running_after}
     finally:
         ctypes.windll.kernel32.CloseHandle(handle)
+
+
+def winword_pids(snapshot: dict[int, dict[str, str | None]] | None = None) -> set[int]:
+    """PIDs in ``snapshot`` (or a fresh snapshot) whose executable is winword.exe."""
+    data = snapshot if snapshot is not None else process_snapshot()
+    return {
+        pid for pid, info in data.items() if (info.get("executable_name") or "").casefold() == WINWORD_EXECUTABLE_NAME
+    }
+
+
+def process_creation_time(pid: int) -> float | None:
+    """Return the process creation time as a Unix epoch timestamp, or None if unavailable."""
+    if not is_windows():
+        return None
+    handle = _open_process(PROCESS_QUERY_LIMITED_INFORMATION, pid)
+    if not handle:
+        return None
+    try:
+        creation = wintypes.FILETIME()
+        exit_time = wintypes.FILETIME()
+        kernel_time = wintypes.FILETIME()
+        user_time = wintypes.FILETIME()
+        ok = ctypes.windll.kernel32.GetProcessTimes(
+            handle,
+            ctypes.byref(creation),
+            ctypes.byref(exit_time),
+            ctypes.byref(kernel_time),
+            ctypes.byref(user_time),
+        )
+        if not ok:
+            return None
+        filetime_value = (creation.dwHighDateTime << 32) | creation.dwLowDateTime
+        if filetime_value == 0:
+            return None
+        return filetime_value / 10_000_000 - WINDOWS_EPOCH_OFFSET_SECONDS
+    finally:
+        ctypes.windll.kernel32.CloseHandle(handle)
+
+
+def find_new_owned_word_processes(
+    before_pids: set[int],
+    *,
+    not_before: float | None = None,
+) -> list[ProcessIdentity]:
+    """Identify winword.exe processes that appeared after ``before_pids`` was captured.
+
+    This covers the case where ``DispatchEx`` itself never returns: the
+    normal Hwnd-based identification path in the worker never runs, so the
+    parent process must fall back to diffing a pre-dispatch process
+    snapshot (persisted to the diagnostics file before the potentially
+    hanging call) against a fresh snapshot taken after the timeout fires.
+
+    A candidate is only ``ownership_verified`` when: its executable is
+    genuinely winword.exe, it was absent from ``before_pids``, its creation
+    time (when queryable) is not earlier than ``not_before``, and it is the
+    *only* new winword.exe process found. When more than one new winword.exe
+    process appears, ownership cannot be disambiguated between "the process
+    our worker spawned" and "a process the user happened to open at the same
+    time" from PID/timing evidence alone, so every candidate is reported as
+    unverified rather than guessed at.
+    """
+    current = winword_pids()
+    new_pids = sorted(current - before_pids)
+    ambiguous = len(new_pids) > 1
+    identities: list[ProcessIdentity] = []
+    for pid in new_pids:
+        executable_path = _query_process_image(pid)
+        executable_name = Path(executable_path).name if executable_path else None
+        expected_executable = executable_name is not None and executable_name.casefold() == WINWORD_EXECUTABLE_NAME
+        created_at = process_creation_time(pid)
+        time_ok = not_before is None or created_at is None or created_at >= not_before - CREATION_TIME_SLACK_SECONDS
+        if not expected_executable:
+            error = "PID no longer resolves to winword.exe."
+        elif not time_ok:
+            error = "Process creation time predates the worker start."
+        elif ambiguous:
+            error = "Multiple new winword.exe processes were detected; ownership cannot be disambiguated."
+        else:
+            error = None
+        identities.append(
+            ProcessIdentity(
+                pid=pid,
+                executable_path=executable_path,
+                executable_name=executable_name,
+                existed_before_dispatch=False,
+                ownership_verified=error is None,
+                verification_error=error,
+            )
+        )
+    return identities
 
 
 def _open_process(access: int, pid: int):

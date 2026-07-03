@@ -1,0 +1,20 @@
+{
+  "branch": "main",
+  "head": "cef6c45375c4d45ca0b2f3e8b18474edf01f5ffc",
+  "origin_main": "cef6c45375c4d45ca0b2f3e8b18474edf01f5ffc",
+  "tag_v0_3_0": "e50da461ca03b71c4ae669c857b2def680e45f70",
+  "working_tree_clean": false,
+  "working_tree_note": "5 untracked audit report files present from prior audit session (not yet committed): CLAUDE_INDEPENDENT_AUDIT_REPORT.md, CLAUDE_RELEASE_INTEGRITY_REPORT.md, CLAUDE_SECURITY_FINDINGS.md, CLAUDE_RECOMMENDED_ACTIONS.md, reports/claude-independent-audit.json. No tracked file is modified.",
+  "python": "3.12.10",
+  "platform": "win32",
+  "tooling_versions": {
+    "build": "1.5.0",
+    "jsonschema": "4.26.0",
+    "pytest": "9.1.1",
+    "pytest-cov": "7.1.0",
+    "ruff": "0.15.20",
+    "setuptools": "82.0.1",
+    "wheel": "0.47.0"
+  },
+  "prior_findings_count": 13
+}

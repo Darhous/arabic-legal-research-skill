@@ -20,21 +20,13 @@ from legal_research_skill.docx.validation import validate_docx
 from legal_research_skill.errors import ArtifactError, InputError, LegalResearchSkillError, UnknownValidatorError
 from legal_research_skill.loader import read_json
 from legal_research_skill.models import ResearchState
+from legal_research_skill.paths import has_extension, is_same_file_target, resolve_confined_path
 from legal_research_skill.pipeline import available_validators, run_pipeline
 from legal_research_skill.report import error_payload, report_to_json, report_to_text
 from legal_research_skill.rules import RULES, get_rule
 from legal_research_skill.schema_validation import artifact_manifest_errors, research_state_errors
 from legal_research_skill.word.finalization import finalize_with_word
 from legal_research_skill.word.runner import DEFAULT_WORD_TIMEOUT_SECONDS
-
-WINDOWS_RESERVED_NAMES = {
-    "CON",
-    "PRN",
-    "AUX",
-    "NUL",
-    *(f"COM{index}" for index in range(1, 10)),
-    *(f"LPT{index}" for index in range(1, 10)),
-}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -129,7 +121,7 @@ def _validate(args: argparse.Namespace) -> int:
         if args.format == "json"
         else report_to_text(report, show_passed=args.show_passed, compact=args.compact)
     )
-    _write_or_print(text, args.output)
+    _write_or_print(text, args.output, input_path=args.input)
     threshold = "medium" if args.fail_on == "warning" else args.fail_on
     for finding in report.findings:
         if args.fail_on == "warning" or threshold_reached(finding.severity, threshold):
@@ -176,7 +168,11 @@ def _explain(rule_id: str) -> int:
 
 
 def _render_docx(args: argparse.Namespace) -> int:
-    output = _safe_output_path(args.output)
+    output = _safe_output_path(args.output, input_path=args.input)
+    if not has_extension(output, ".docx"):
+        raise InputError(f"Output path must use the .docx extension: {output}")
+    if output.is_dir():
+        raise InputError(f"Output path is a directory, not a file: {output}")
     report = run_pipeline(args.input)
     raw = read_json(args.input)
     model = build_render_model(ResearchState(raw), report)
@@ -202,7 +198,7 @@ def _validate_docx(args: argparse.Namespace) -> int:
 
 
 def _finalize_word(args: argparse.Namespace) -> int:
-    output = _safe_output_path(args.output)
+    output = _safe_output_path(args.output, input_path=args.input)
     result = finalize_with_word(args.input, output, timeout_seconds=args.word_timeout_seconds)
     _emit_payload(result.to_dict(), args.format)
     if result.status == "WORD_VALIDATED":
@@ -221,6 +217,8 @@ def _build_artifact(args: argparse.Namespace) -> int:
     config = RenderConfig()
     model = build_render_model(state, validation_report, config=config)
     pre_word = output_dir / f"{state.task_identifier}.docx"
+    if is_same_file_target(args.input, pre_word):
+        raise InputError(f"Artifact output path must not refer to the same file as the input path: {pre_word}")
     render_docx(model, pre_word)
     docx_report = validate_docx(pre_word)
     word_result = (
@@ -269,11 +267,11 @@ def _build_artifact(args: argparse.Namespace) -> int:
     return 0
 
 
-def _write_or_print(text: str, output: Path | None) -> None:
+def _write_or_print(text: str, output: Path | None, *, input_path: Path | None = None) -> None:
     if output is None:
         print(text, end="")
         return
-    safe_output = _safe_output_path(output)
+    safe_output = _safe_output_path(output, input_path=input_path)
     safe_output.parent.mkdir(parents=True, exist_ok=True)
     safe_output.write_text(text, encoding="utf-8")
 
@@ -289,13 +287,13 @@ def _emit_payload(payload: dict, output_format: str) -> None:
             print(f"{key}: {payload[key]}")
 
 
-def _safe_output_path(output: Path) -> Path:
-    root = Path.cwd().resolve()
-    resolved = output.resolve()
-    if resolved != root and root not in resolved.parents:
-        raise InputError("Output path must stay within the current working directory.")
-    if resolved.stem.upper() in WINDOWS_RESERVED_NAMES:
-        raise InputError("Output path uses a reserved Windows device name.")
+def _safe_output_path(output: Path, *, input_path: Path | None = None) -> Path:
+    try:
+        resolved = resolve_confined_path(output)
+    except ValueError as exc:
+        raise InputError(str(exc).replace("Path", "Output path", 1)) from exc
+    if input_path is not None and is_same_file_target(input_path, output):
+        raise InputError(f"Output path must not refer to the same file as the input path: {output}")
     return resolved
 
 

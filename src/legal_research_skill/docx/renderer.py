@@ -107,6 +107,10 @@ def _app_xml() -> str:
 
 
 def _core_xml(model: DocumentRenderModel) -> str:
+    # model.generated_at is RenderConfig.created_at, which defaults to a
+    # fixed build-epoch constant for reproducible builds -- not necessarily
+    # the real time this specific document was produced. See
+    # docx/render_model.py's DEFAULT_BUILD_EPOCH for the full rationale.
     title = escape(model.title)
     author = escape(model.author)
     created = escape(model.generated_at)

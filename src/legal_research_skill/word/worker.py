@@ -9,11 +9,17 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Any
 
-from legal_research_skill.word.processes import identify_word_process, process_snapshot, word_pid_from_hwnd
+from legal_research_skill.word.processes import (
+    identify_word_process,
+    process_snapshot,
+    winword_pids,
+    word_pid_from_hwnd,
+)
 
 
 def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str | None = None) -> dict[str, Any]:
     started = time.monotonic()
+    wall_clock_started = time.time()
     app = None
     document = None
     com_initialized = False
@@ -32,6 +38,8 @@ def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str 
         "word_pid": None,
         "word_pid_ownership_verified": False,
         "word_process_identity": None,
+        "worker_started_at": wall_clock_started,
+        "before_dispatch_winword_pids": [],
     }
     try:
         if platform.system().lower() != "windows":
@@ -47,12 +55,24 @@ def word_worker_entry(input_path: str, working_path: str, diagnostics_path: str 
             pythoncom.CoInitializeEx(pythoncom.COINIT_APARTMENTTHREADED)
             com_initialized = True
             before_dispatch = process_snapshot()
+            # Persisted to disk via diagnostics.started() below *before* the
+            # potentially-hanging DispatchEx call, so that if this worker is
+            # killed mid-hang, the parent process can still recover which
+            # winword.exe PIDs pre-existed and diff against a post-timeout
+            # snapshot to find any orphaned process DispatchEx may have
+            # spawned without ever returning.
+            evidence["before_dispatch_winword_pids"] = sorted(winword_pids(before_dispatch))
             diagnostics.started("dispatch", evidence)
             app = client.DispatchEx("Word.Application")
             diagnostics.completed("word_instance_created", evidence)
             word_version = str(getattr(app, "Version", "") or "") or None
             app.Visible = False
             app.DisplayAlerts = 0
+            # Best-effort automation knobs: some Word/COM builds don't expose
+            # these properties, or reject them depending on install/policy
+            # configuration. Neither is required for the finalization
+            # pipeline to be correct, so a failure here is intentionally
+            # non-fatal rather than aborting the whole run.
             with suppress(Exception):
                 app.ScreenUpdating = False
             with suppress(Exception):
@@ -228,6 +248,8 @@ class _Diagnostics:
             "worker_pid": os.getpid(),
             "word_pid": evidence.get("word_pid"),
             "word_pid_ownership_verified": evidence.get("word_pid_ownership_verified"),
+            "worker_started_at": evidence.get("worker_started_at"),
+            "before_dispatch_winword_pids": evidence.get("before_dispatch_winword_pids"),
             "last_operation_started": self.last_started,
             "last_operation_completed": self.last_completed,
         }
