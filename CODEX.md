@@ -1,6 +1,12 @@
 # CODEX.md
 
+<!-- Designed by Ahmed Darhous -- https://github.com/darhous -->
+
 This file tells Codex how to maintain and implement the `arabic-legal-research-skill` repository.
+
+> Looking for the end-user, ready-made prompt to *use* this project with Codex to produce legal
+> research output (instead of developing the codebase)? See [`prompts/codex.md`](prompts/codex.md).
+> This file (`CODEX.md`) is the maintainer/development contract.
 
 ## Project Purpose
 
